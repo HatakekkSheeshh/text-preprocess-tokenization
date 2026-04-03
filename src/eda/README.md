@@ -10,3 +10,9 @@ Typical analyses:
 
 Generated plots or tables should be saved to `outputs/eda/`.
 
+## wikitext-103
+With containing long-range context and diverse vocabulary, we explore primarily on these aspects:
+- Document/sentence length 
+- Long-tail vocabulary 
+- Punctuation ratio
+- Rare words

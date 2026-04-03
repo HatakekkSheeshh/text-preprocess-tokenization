@@ -16,12 +16,28 @@ The repository is currently in the initialization stage. No preprocessing pipeli
 
 ## Planned Datasets
 
-| Dataset | Characteristics |
-| --- | --- |
-| One Billion Word | Large-scale data, independent sentences, limited long-range context |
-| WikiText-103 | Wikipedia-style text, longer context, rich linguistic content |
-| Text8 | Heavily normalized text, no punctuation, mostly lowercase |
-| Enwik8 | Raw byte-level data with many special characters |
+| Dataset | Dataset Name | Characteristics |
+| --- | --- | --- |
+| One Billion Word | `one-billion-word` | Large-scale data, independent sentences, limited long-range context |
+| WikiText-103 | `wikitext-103` | Wikipedia-style text, longer context, rich linguistic content |
+| Text8 | `text8` | Heavily normalized text, no punctuation, mostly lowercase |
+| Enwik8 | `enwik8` | Raw byte-level data with many special characters |
+
+## How to Run
+
+Download Dataset:
+
+```bash
+python src/main.py --download <dataset_name>
+```
+
+Run EDA for Dataset:
+
+```bash
+python src/main.py --eda <dataset_name>
+```
+
+EDA outputs will be saved to `outputs/eda/<dataset_name>/`.
 
 ## Planned Scope
 

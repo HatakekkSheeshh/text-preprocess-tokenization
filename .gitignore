@@ -205,3 +205,24 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Project data and generated artifacts
+data/raw/*
+!data/raw/.gitkeep
+!data/raw/README.md
+
+data/processed/*
+!data/processed/.gitkeep
+!data/processed/README.md
+
+outputs/eda/*
+!outputs/eda/.gitkeep
+!outputs/eda/README.md
+
+outputs/checkpoints/*
+!outputs/checkpoints/.gitkeep
+!outputs/checkpoints/README.md
+
+outputs/metrics/*
+!outputs/metrics/.gitkeep
+!outputs/metrics/README.md

@@ -39,6 +39,11 @@ python src/main.py --eda <dataset_name>
 
 EDA outputs will be saved to `outputs/eda/<dataset_name>/`.
 
+Currently implemented:
+
+- `text8`
+- `wikitext-103`
+
 ## Planned Scope
 
 ### 1. Data Selection & EDA

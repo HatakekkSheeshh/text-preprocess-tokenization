@@ -28,6 +28,7 @@ def run_eda():
         raw_text = f.read()
 
     raw_text = html.unescape(raw_text)
+    raw_text = html.unescape(raw_text)
     raw_text = raw_text.lower()
 
     vocab_counter = Counter()

@@ -1,5 +1,6 @@
 import json
 import re
+import html
 import csv
 import string
 from collections import Counter
@@ -25,6 +26,9 @@ def run_eda():
     
     with open(DATASET_PATH, "r", encoding="utf-8", errors="ignore") as f:
         raw_text = f.read()
+
+    raw_text = html.unescape(raw_text)
+    raw_text = raw_text.lower()
 
     vocab_counter = Counter()
     sentence_lengths = []

@@ -5,7 +5,9 @@ import string
 from collections import Counter
 from pathlib import Path
 
+import matplotlib.pyplot as plt
 from datasets import load_from_disk  # type: ignore
+from tqdm import tqdm
 
 
 DATASET_NAME = "wikitext-103"
@@ -22,6 +24,10 @@ TOP_K_WORDS = 100
 RARE_WORD_MAX_FREQ = 2
 
 
+# -----------------------------
+# Text processing helpers
+# -----------------------------
+
 def tokenize_words(text: str) -> list[str]:
     return WORD_PATTERN.findall(text.lower())
 
@@ -33,6 +39,10 @@ def is_heading(text: str) -> bool:
 def split_sentences(text: str) -> list[str]:
     return [segment.strip() for segment in SENTENCE_SPLIT_PATTERN.split(text) if segment.strip()]
 
+
+# -----------------------------
+# EDA/statistics helpers
+# -----------------------------
 
 def init_split_stats() -> dict:
     return {
@@ -50,54 +60,65 @@ def init_split_stats() -> dict:
     }
 
 
-def analyze_split(split_ds) -> tuple[dict, Counter]:
+def close_current_document(stats: dict, current_document_length: int, has_current_document: bool) -> None:
+    if has_current_document:
+        stats["document_lengths"].append(current_document_length)
+
+
+def update_text_statistics(stats: dict, text: str, vocab_counter: Counter, current_document_length: int) -> int:
+    stats["num_non_empty_rows"] += 1
+    stats["num_characters"] += len(text)
+
+    non_space_chars = [ch for ch in text if not ch.isspace()]
+    stats["num_non_space_characters"] += len(non_space_chars)
+    stats["num_punctuation_characters"] += sum(
+        ch in PUNCTUATION_CHARS for ch in non_space_chars
+    )
+
+    words = tokenize_words(text)
+    word_count = len(words)
+    stats["num_words"] += word_count
+    stats["row_lengths"].append(word_count)
+    vocab_counter.update(words)
+
+    for sentence in split_sentences(text):
+        sentence_len = len(tokenize_words(sentence))
+        if sentence_len > 0:
+            stats["sentence_lengths"].append(sentence_len)
+            stats["num_sentences"] += 1
+
+    return current_document_length + word_count
+
+
+def analyze_split(split_name: str, split_ds) -> tuple[dict, Counter]:
     stats = init_split_stats()
     vocab_counter = Counter()
 
     current_document_length = 0
+    has_current_document = False
 
-    for row in split_ds:
+    for row in tqdm(split_ds, desc=f"Analyzing {split_name}", unit="rows"):
         text = row["text"]
         stats["num_rows"] += 1
 
         if not text or not text.strip():
-            if current_document_length > 0:
-                stats["document_lengths"].append(current_document_length)
-                stats["num_documents"] += 1
-                current_document_length = 0
             continue
 
         if is_heading(text):
-            if current_document_length > 0:
-                stats["document_lengths"].append(current_document_length)
-                stats["num_documents"] += 1
-                current_document_length = 0
+            close_current_document(stats, current_document_length, has_current_document)
+            stats["num_documents"] += 1
+            current_document_length = 0
+            has_current_document = True
             continue
 
-        stats["num_non_empty_rows"] += 1
-        stats["num_characters"] += len(text)
+        current_document_length = update_text_statistics(
+            stats=stats,
+            text=text,
+            vocab_counter=vocab_counter,
+            current_document_length=current_document_length,
+        )
 
-        non_space_chars = [ch for ch in text if not ch.isspace()]
-        stats["num_non_space_characters"] += len(non_space_chars)
-        stats["num_punctuation_characters"] += sum(ch in PUNCTUATION_CHARS for ch in non_space_chars)
-
-        words = tokenize_words(text)
-        word_count = len(words)
-        stats["num_words"] += word_count
-        stats["row_lengths"].append(word_count)
-        current_document_length += word_count
-        vocab_counter.update(words)
-
-        sentences = split_sentences(text)
-        for sentence in sentences:
-            sentence_len = len(tokenize_words(sentence))
-            if sentence_len > 0:
-                stats["sentence_lengths"].append(sentence_len)
-                stats["num_sentences"] += 1
-
-    if current_document_length > 0:
-        stats["document_lengths"].append(current_document_length)
-        stats["num_documents"] += 1
+    close_current_document(stats, current_document_length, has_current_document)
 
     return stats, vocab_counter
 
@@ -143,13 +164,22 @@ def build_split_summary(stats: dict, vocab_counter: Counter) -> dict:
     }
 
 
-def save_summary(summary: dict) -> None:
+# -----------------------------
+# Output saving helpers
+# -----------------------------
+
+def ensure_output_dir() -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def save_summary(summary: dict) -> None:
+    ensure_output_dir()
     output_path = OUTPUT_DIR / "summary.json"
     output_path.write_text(json.dumps(summary, indent=2), encoding="utf-8")
 
 
 def save_split_stats_csv(summary: dict) -> None:
+    ensure_output_dir()
     output_path = OUTPUT_DIR / "split_stats.csv"
     fieldnames = [
         "split",
@@ -191,6 +221,7 @@ def save_split_stats_csv(summary: dict) -> None:
 
 
 def save_vocab_csv(vocab_counter: Counter, file_name: str, limit: int | None = None) -> None:
+    ensure_output_dir()
     output_path = OUTPUT_DIR / file_name
     items = vocab_counter.most_common(limit) if limit is not None else vocab_counter.most_common()
 
@@ -200,24 +231,112 @@ def save_vocab_csv(vocab_counter: Counter, file_name: str, limit: int | None = N
         writer.writerows(items)
 
 
-def run_wikitext_103_eda() -> dict:
-    if not DATASET_PATH.exists():
-        raise FileNotFoundError(
-            f"Dataset not found at {DATASET_PATH}. "
-            "Please download and save it to data/raw/wikitext-103 first."
-        )
+def save_length_histogram(values: list[int], title: str, xlabel: str, file_name: str, max_x: int | None = None) -> None:
+    ensure_output_dir()
+    plt.figure(figsize=(10, 6))
 
-    dataset_dict = load_from_disk(str(DATASET_PATH))
+    if max_x is not None:
+        values = [value for value in values if value <= max_x]
 
-    summary = {}
-    train_vocab_counter = Counter()
+    plt.hist(values, bins=50, color="#4C72B0", edgecolor="black", alpha=0.8)
+    plt.title(title)
+    plt.xlabel(xlabel)
+    plt.ylabel("Frequency")
+    plt.tight_layout()
+    plt.savefig(OUTPUT_DIR / file_name, dpi=200)
+    plt.close()
 
-    for split_name in dataset_dict.keys():
-        split_stats, vocab_counter = analyze_split(dataset_dict[split_name])
-        summary[split_name] = build_split_summary(split_stats, vocab_counter)
-        if split_name == "train":
-            train_vocab_counter = vocab_counter
 
+def save_split_bar_chart(summary: dict, metric_name: str, title: str, ylabel: str, file_name: str) -> None:
+    ensure_output_dir()
+    split_names = list(summary.keys())
+    values = [summary[split_name][metric_name] for split_name in split_names]
+
+    plt.figure(figsize=(8, 5))
+    plt.bar(split_names, values, color="#55A868", edgecolor="black")
+    plt.title(title)
+    plt.xlabel("Split")
+    plt.ylabel(ylabel)
+    plt.tight_layout()
+    plt.savefig(OUTPUT_DIR / file_name, dpi=200)
+    plt.close()
+
+
+def save_top_words_plot(vocab_counter: Counter, top_k: int = 30) -> None:
+    ensure_output_dir()
+    top_words = vocab_counter.most_common(top_k)
+    words = [word for word, _ in top_words]
+    freqs = [freq for _, freq in top_words]
+
+    plt.figure(figsize=(12, 6))
+    plt.bar(words, freqs, color="#C44E52", edgecolor="black")
+    plt.title(f"Top {top_k} Most Frequent Words in Train Split")
+    plt.xlabel("Word")
+    plt.ylabel("Frequency")
+    plt.xticks(rotation=60, ha="right")
+    plt.tight_layout()
+    plt.savefig(OUTPUT_DIR / "train_top30_words.png", dpi=200)
+    plt.close()
+
+
+def save_zipf_plot(vocab_counter: Counter) -> None:
+    ensure_output_dir()
+    sorted_freqs = [freq for _, freq in vocab_counter.most_common()]
+    ranks = list(range(1, len(sorted_freqs) + 1))
+
+    plt.figure(figsize=(8, 6))
+    plt.loglog(ranks, sorted_freqs, color="#8172B3")
+    plt.title("Train Vocabulary Zipf Plot")
+    plt.xlabel("Word Rank (log scale)")
+    plt.ylabel("Frequency (log scale)")
+    plt.tight_layout()
+    plt.savefig(OUTPUT_DIR / "train_vocab_zipf.png", dpi=200)
+    plt.close()
+
+
+def save_eda_plots(summary: dict, split_stats_map: dict, train_vocab_counter: Counter) -> None:
+    save_split_bar_chart(
+        summary=summary,
+        metric_name="vocab_size",
+        title="Vocabulary Size by Split",
+        ylabel="Vocabulary Size",
+        file_name="split_vocab_size.png",
+    )
+    save_split_bar_chart(
+        summary=summary,
+        metric_name="rare_word_ratio",
+        title="Rare Word Ratio by Split",
+        ylabel="Rare Word Ratio",
+        file_name="split_rare_word_ratio.png",
+    )
+    save_split_bar_chart(
+        summary=summary,
+        metric_name="punctuation_ratio",
+        title="Punctuation Ratio by Split",
+        ylabel="Punctuation Ratio",
+        file_name="split_punctuation_ratio.png",
+    )
+
+    train_stats = split_stats_map["train"]
+    save_length_histogram(
+        values=train_stats["document_lengths"],
+        title="Train Document Length Distribution",
+        xlabel="Document Length (words)",
+        file_name="train_document_length_hist.png",
+        max_x=2000,
+    )
+    save_length_histogram(
+        values=train_stats["sentence_lengths"],
+        title="Train Sentence Length Distribution",
+        xlabel="Sentence Length (words)",
+        file_name="train_sentence_length_hist.png",
+        max_x=100,
+    )
+    save_top_words_plot(train_vocab_counter, top_k=30)
+    save_zipf_plot(train_vocab_counter)
+
+
+def save_eda_outputs(summary: dict, split_stats_map: dict, train_vocab_counter: Counter) -> None:
     save_summary(summary)
     save_split_stats_csv(summary)
     save_vocab_csv(train_vocab_counter, "train_vocab_top100.csv", limit=TOP_K_WORDS)
@@ -230,10 +349,38 @@ def run_wikitext_103_eda() -> dict:
         }
     )
     save_vocab_csv(rare_vocab_counter, "train_rare_words.csv")
+    save_eda_plots(summary, split_stats_map, train_vocab_counter)
+
+
+# -----------------------------
+# Main EDA runner
+# -----------------------------
+
+def run_wikitext_103_eda() -> dict:
+    if not DATASET_PATH.exists():
+        raise FileNotFoundError(
+            f"Dataset not found at {DATASET_PATH}. "
+            "Please download and save it to data/raw/wikitext-103 first."
+        )
+
+    dataset_dict = load_from_disk(str(DATASET_PATH))
+
+    summary = {}
+    split_stats_map = {}
+    train_vocab_counter = Counter()
+
+    for split_name in dataset_dict.keys():
+        split_stats, vocab_counter = analyze_split(split_name, dataset_dict[split_name])
+        split_stats_map[split_name] = split_stats
+        summary[split_name] = build_split_summary(split_stats, vocab_counter)
+        if split_name == "train":
+            train_vocab_counter = vocab_counter
+
+    save_eda_outputs(summary, split_stats_map, train_vocab_counter)
 
     return summary
 
 
-if __name__ == "__main__":
-    eda_summary = run_wikitext_103_eda()
-    print(json.dumps(eda_summary, indent=2))
+# if __name__ == "__main__":
+    # eda_summary = run_wikitext_103_eda()
+    # print(json.dumps(eda_summary, indent=2))

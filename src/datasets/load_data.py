@@ -13,6 +13,8 @@ def save(dataset_name: str, ds: DatasetDict):
 def load(dataset_name: str) -> DatasetDict:
     if dataset_name == "wikitext-103":
         ds = load_dataset("Salesforce/wikitext", "wikitext-103-v1")
+    elif dataset_name == "":
+        pass
     else:
         raise ValueError(f"Unsupported dataset: {dataset_name}")
 

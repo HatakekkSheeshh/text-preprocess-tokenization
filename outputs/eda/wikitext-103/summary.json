@@ -1,0 +1,92 @@
+{
+  "test": {
+    "num_rows": 4358,
+    "num_non_empty_rows": 2185,
+    "num_documents": 706,
+    "num_sentences": 10375,
+    "num_words": 204890,
+    "vocab_size": 17336,
+    "punctuation_ratio": 0.0429276163495125,
+    "rare_word_threshold": 2,
+    "num_rare_words": 9943,
+    "rare_word_ratio": 0.5735463774803876,
+    "document_length": {
+      "count": 706,
+      "min": 0,
+      "max": 2589,
+      "mean": 290.21246458923514
+    },
+    "sentence_length": {
+      "count": 10375,
+      "min": 1,
+      "max": 117,
+      "mean": 19.74843373493976
+    },
+    "row_length": {
+      "count": 2185,
+      "min": 1,
+      "max": 420,
+      "mean": 93.77116704805492
+    }
+  },
+  "train": {
+    "num_rows": 1801350,
+    "num_non_empty_rows": 859955,
+    "num_documents": 305074,
+    "num_sentences": 4222636,
+    "num_words": 85937806,
+    "vocab_size": 220741,
+    "punctuation_ratio": 0.04095095184165769,
+    "rare_word_threshold": 2,
+    "num_rare_words": 580,
+    "rare_word_ratio": 0.0026275136925174754,
+    "document_length": {
+      "count": 305074,
+      "min": 0,
+      "max": 5584,
+      "mean": 281.69495270000067
+    },
+    "sentence_length": {
+      "count": 4222636,
+      "min": 1,
+      "max": 355,
+      "mean": 20.35169642848685
+    },
+    "row_length": {
+      "count": 859955,
+      "min": 0,
+      "max": 1209,
+      "mean": 99.9329104429883
+    }
+  },
+  "validation": {
+    "num_rows": 3760,
+    "num_non_empty_rows": 1841,
+    "num_documents": 620,
+    "num_sentences": 8999,
+    "num_words": 182252,
+    "vocab_size": 16448,
+    "punctuation_ratio": 0.041096222613173895,
+    "rare_word_threshold": 2,
+    "num_rare_words": 9612,
+    "rare_word_ratio": 0.584387159533074,
+    "document_length": {
+      "count": 620,
+      "min": 0,
+      "max": 1553,
+      "mean": 293.9548387096774
+    },
+    "sentence_length": {
+      "count": 8999,
+      "min": 1,
+      "max": 172,
+      "mean": 20.252472496944105
+    },
+    "row_length": {
+      "count": 1841,
+      "min": 1,
+      "max": 361,
+      "mean": 98.99619771863118
+    }
+  }
+}

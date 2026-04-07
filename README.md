@@ -25,19 +25,28 @@ The repository is currently in the initialization stage. No preprocessing pipeli
 
 ## How to Run
 
-Download Dataset:
+Load Dataset:
 
 ```bash
-python src/main.py --download <dataset_name>
+python main.py --load <dataset_name>
 ```
 
 Run EDA for Dataset:
 
 ```bash
-python src/main.py --eda <dataset_name>
+python main.py --eda <dataset_name>
 ```
 
-EDA outputs will be saved to `outputs/eda/<dataset_name>/`.
+Both arguments are optional and default to `None`.
+
+Example:
+
+```bash
+python main.py --load wikitext-103
+python main.py --eda text8
+```
+
+EDA outputs will be saved to `outputs/eda/<dataset_name>/` when the EDA flow is implemented.
 
 Currently implemented:
 

@@ -11,6 +11,7 @@ import matplotlib
 matplotlib.use("Agg")
 
 import matplotlib.pyplot as plt
+from tqdm import tqdm
 
 
 DATASET_NAME = "enwik8"
@@ -35,6 +36,17 @@ PLOT_ACCENT_ALT = "#2B5F75"
 PLOT_NEUTRAL = "#D6C6A8"
 PLOT_TEXT = "#2A221C"
 PLOT_GRID = "#E7DCCD"
+
+
+def resolve_dataset_file() -> Path:
+    if DATASET_PATH.is_file():
+        return DATASET_PATH
+
+    nested_file = DATASET_PATH / "enwik8"
+    if nested_file.is_file():
+        return nested_file
+
+    raise FileNotFoundError(f"Dataset file not found at: {DATASET_PATH} or {nested_file}")
 
 
 def make_figure_directories() -> list[Path]:
@@ -101,7 +113,9 @@ def run_eda():
     if not DATASET_PATH.exists():
         raise FileNotFoundError(f"Dataset not found at: {DATASET_PATH}")
 
-    with DATASET_PATH.open("r", encoding="utf-8", errors="ignore") as file:
+    dataset_file = resolve_dataset_file()
+
+    with dataset_file.open("r", encoding="utf-8", errors="ignore") as file:
         raw_text = file.read()
 
     raw_text = html.unescape(raw_text)
@@ -124,7 +138,7 @@ def run_eda():
     vocab_counter.update(words)
 
     sentences = [sentence.strip() for sentence in SENTENCE_SPLIT_PATTERN.split(raw_text) if sentence.strip()]
-    for sentence in sentences:
+    for sentence in tqdm(sentences, desc="Analyzing sentences", unit="sentence"):
         word_count = len(WORD_PATTERN.findall(sentence))
         if word_count > 0:
             sentence_lengths.append(word_count)

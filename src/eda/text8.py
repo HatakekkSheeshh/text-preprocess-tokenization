@@ -11,6 +11,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from datasets import load_from_disk  # type: ignore
 from matplotlib.ticker import FuncFormatter, PercentFormatter
+from tqdm import tqdm
 
 
 DATASET_NAME = "text8"
@@ -40,7 +41,12 @@ PLOT_GRID = "#E7DCCD"
 def iter_chunk_words(text: str, chunk_size: int = CHUNK_SIZE):
     remainder = ""
 
-    for start in range(0, len(text), chunk_size):
+    for start in tqdm(
+        range(0, len(text), chunk_size),
+        desc="Tokenizing chunks",
+        unit="chunk",
+        leave=False,
+    ):
         chunk = remainder + text[start : start + chunk_size]
 
         if start + chunk_size < len(text):
@@ -622,7 +628,7 @@ def run_text8_eda() -> dict:
     split_char_counters = {}
     train_word_length_counter = Counter()
 
-    for split_name in dataset_dict.keys():
+    for split_name in tqdm(dataset_dict.keys(), desc="Analyzing splits", unit="split"):
         text = dataset_dict[split_name][0]["text"]
         split_summary, vocab_counter, char_counter, word_length_counter = analyze_split(text)
         split_summaries[split_name] = split_summary

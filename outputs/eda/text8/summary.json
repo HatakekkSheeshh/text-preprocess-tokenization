@@ -1,0 +1,421 @@
+{
+  "dataset": "text8",
+  "notes": {
+    "structure": "Each split is a single continuous normalized text stream.",
+    "recommended_preprocessing": "Avoid extra normalization; whitespace tokenization is enough for the word-level baseline."
+  },
+  "splits": {
+    "train": {
+      "num_rows": 1,
+      "num_words": 15301749,
+      "vocab_size": 239974,
+      "character_vocab_size": 27,
+      "total_characters": 90000000,
+      "space_count": 15301749,
+      "non_space_characters": 74698251,
+      "space_ratio": 0.17001943333333333,
+      "punctuation_count": 0,
+      "punctuation_ratio": 0.0,
+      "digit_count": 0,
+      "digit_ratio": 0.0,
+      "uppercase_count": 0,
+      "uppercase_ratio": 0.0,
+      "newline_count": 0,
+      "tab_count": 0,
+      "double_space_count": 0,
+      "avg_word_length": 4.8816805843567295,
+      "lexical_diversity": 0.015682782406115797,
+      "num_rare_words": 145524,
+      "rare_word_ratio": 0.6064156950336287,
+      "word_length": {
+        "count": 15301749,
+        "min": 1,
+        "max": 100,
+        "mean": 4.8816805843567295,
+        "median": 4,
+        "p95": 10
+      },
+      "top_word_coverage": {
+        "top_10": 0.24665546402571367,
+        "top_100": 0.46980858201242226,
+        "top_1000": 0.6721140831678784
+      },
+      "non_overlapping_windows": {
+        "128": 119544,
+        "256": 59772,
+        "512": 29886
+      },
+      "character_set": [
+        " ",
+        "a",
+        "b",
+        "c",
+        "d",
+        "e",
+        "f",
+        "g",
+        "h",
+        "i",
+        "j",
+        "k",
+        "l",
+        "m",
+        "n",
+        "o",
+        "p",
+        "q",
+        "r",
+        "s",
+        "t",
+        "u",
+        "v",
+        "w",
+        "x",
+        "y",
+        "z"
+      ]
+    },
+    "validation": {
+      "num_rows": 1,
+      "num_words": 848226,
+      "vocab_size": 45371,
+      "character_vocab_size": 27,
+      "total_characters": 5000000,
+      "space_count": 848226,
+      "non_space_characters": 4151774,
+      "space_ratio": 0.1696452,
+      "punctuation_count": 0,
+      "punctuation_ratio": 0.0,
+      "digit_count": 0,
+      "digit_ratio": 0.0,
+      "uppercase_count": 0,
+      "uppercase_ratio": 0.0,
+      "newline_count": 0,
+      "tab_count": 0,
+      "double_space_count": 0,
+      "avg_word_length": 4.894655433811272,
+      "lexical_diversity": 0.05348928233749024,
+      "num_rare_words": 27645,
+      "rare_word_ratio": 0.6093099116175531,
+      "word_length": {
+        "count": 848226,
+        "min": 1,
+        "max": 33,
+        "mean": 4.894655433811272,
+        "median": 4,
+        "p95": 10
+      },
+      "top_word_coverage": {
+        "top_10": 0.25832148507591135,
+        "top_100": 0.4797565743092053,
+        "top_1000": 0.6901226795688885
+      },
+      "non_overlapping_windows": {
+        "128": 6626,
+        "256": 3313,
+        "512": 1656
+      },
+      "character_set": [
+        " ",
+        "a",
+        "b",
+        "c",
+        "d",
+        "e",
+        "f",
+        "g",
+        "h",
+        "i",
+        "j",
+        "k",
+        "l",
+        "m",
+        "n",
+        "o",
+        "p",
+        "q",
+        "r",
+        "s",
+        "t",
+        "u",
+        "v",
+        "w",
+        "x",
+        "y",
+        "z"
+      ]
+    },
+    "test": {
+      "num_rows": 1,
+      "num_words": 855233,
+      "vocab_size": 47725,
+      "character_vocab_size": 27,
+      "total_characters": 5000000,
+      "space_count": 855232,
+      "non_space_characters": 4144768,
+      "space_ratio": 0.1710464,
+      "punctuation_count": 0,
+      "punctuation_ratio": 0.0,
+      "digit_count": 0,
+      "digit_ratio": 0.0,
+      "uppercase_count": 0,
+      "uppercase_ratio": 0.0,
+      "newline_count": 0,
+      "tab_count": 0,
+      "double_space_count": 0,
+      "avg_word_length": 4.846361167073768,
+      "lexical_diversity": 0.05580350617901788,
+      "num_rare_words": 28976,
+      "rare_word_ratio": 0.6071451021477213,
+      "word_length": {
+        "count": 855233,
+        "min": 1,
+        "max": 32,
+        "mean": 4.846361167073768,
+        "median": 4,
+        "p95": 10
+      },
+      "top_word_coverage": {
+        "top_10": 0.2485755343865356,
+        "top_100": 0.4751231535733537,
+        "top_1000": 0.6801129049042776
+      },
+      "non_overlapping_windows": {
+        "128": 6681,
+        "256": 3340,
+        "512": 1670
+      },
+      "character_set": [
+        " ",
+        "a",
+        "b",
+        "c",
+        "d",
+        "e",
+        "f",
+        "g",
+        "h",
+        "i",
+        "j",
+        "k",
+        "l",
+        "m",
+        "n",
+        "o",
+        "p",
+        "q",
+        "r",
+        "s",
+        "t",
+        "u",
+        "v",
+        "w",
+        "x",
+        "y",
+        "z"
+      ]
+    }
+  },
+  "oov_vs_train": {
+    "validation": {
+      "unique_oov_words": 6717,
+      "unique_oov_ratio": 0.1480461087478786,
+      "token_oov_count": 9450,
+      "token_oov_ratio": 0.011140898769903304,
+      "in_vocab_token_ratio": 0.9888591012300967
+    },
+    "test": {
+      "unique_oov_words": 7364,
+      "unique_oov_ratio": 0.1543006809848088,
+      "token_oov_count": 10074,
+      "token_oov_ratio": 0.011779246123571004,
+      "in_vocab_token_ratio": 0.988220753876429
+    }
+  },
+  "examples": {
+    "train_top_words": [
+      {
+        "word": "the",
+        "frequency": 959400
+      },
+      {
+        "word": "of",
+        "frequency": 537026
+      },
+      {
+        "word": "and",
+        "frequency": 376168
+      },
+      {
+        "word": "one",
+        "frequency": 363032
+      },
+      {
+        "word": "in",
+        "frequency": 335407
+      },
+      {
+        "word": "a",
+        "frequency": 293344
+      },
+      {
+        "word": "to",
+        "frequency": 285896
+      },
+      {
+        "word": "zero",
+        "frequency": 233930
+      },
+      {
+        "word": "nine",
+        "frequency": 219556
+      },
+      {
+        "word": "two",
+        "frequency": 170501
+      },
+      {
+        "word": "is",
+        "frequency": 166099
+      },
+      {
+        "word": "as",
+        "frequency": 119329
+      },
+      {
+        "word": "eight",
+        "frequency": 110342
+      },
+      {
+        "word": "for",
+        "frequency": 106882
+      },
+      {
+        "word": "s",
+        "frequency": 105076
+      },
+      {
+        "word": "five",
+        "frequency": 102311
+      },
+      {
+        "word": "three",
+        "frequency": 101668
+      },
+      {
+        "word": "was",
+        "frequency": 101498
+      },
+      {
+        "word": "by",
+        "frequency": 100971
+      },
+      {
+        "word": "that",
+        "frequency": 99400
+      }
+    ],
+    "train_longest_words": [
+      {
+        "word": "bababadalgharaghtakamminarronnkonnbronntonnerronntuonnthunntrovarrhounawnskawntoohoohoordenenthurnuk",
+        "length": 100,
+        "frequency": 1
+      },
+      {
+        "word": "germanhungarianczechpolishruthenianromaniancroatslovakserbslovene",
+        "length": 65,
+        "frequency": 1
+      },
+      {
+        "word": "sodiummetadiaminoparadioxyarsenobenzoemethylenesulphoxylate",
+        "length": 59,
+        "frequency": 1
+      },
+      {
+        "word": "llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogoch",
+        "length": 58,
+        "frequency": 2
+      },
+      {
+        "word": "hottentottensoldatententententoonstellingsterreinen",
+        "length": 51,
+        "frequency": 1
+      },
+      {
+        "word": "laurynhillthemiseducationoflaurynhillalbumcover",
+        "length": 47,
+        "frequency": 1
+      },
+      {
+        "word": "pneumonoultramicroscopicsilicovolcanoconiosis",
+        "length": 45,
+        "frequency": 4
+      },
+      {
+        "word": "pneumonoultramicroscopicsilicovolcanokoniosis",
+        "length": 45,
+        "frequency": 1
+      },
+      {
+        "word": "dodecahedronicosidodecahedrontruncated",
+        "length": 38,
+        "frequency": 1
+      },
+      {
+        "word": "hexdecimalglyphnamehexdecimalglyphname",
+        "length": 38,
+        "frequency": 1
+      },
+      {
+        "word": "hippopotomonstrosesquippedaliophobia",
+        "length": 36,
+        "frequency": 2
+      },
+      {
+        "word": "polyoxybenzylmethylenglycolanhydride",
+        "length": 36,
+        "frequency": 1
+      },
+      {
+        "word": "supercalifragilisticexpialidocious",
+        "length": 34,
+        "frequency": 4
+      },
+      {
+        "word": "antidisestablishmentarianistically",
+        "length": 34,
+        "frequency": 1
+      },
+      {
+        "word": "pseudoantidisestablishmentarianism",
+        "length": 34,
+        "frequency": 1
+      },
+      {
+        "word": "generateprovablyparadoxicalstring",
+        "length": 33,
+        "frequency": 2
+      },
+      {
+        "word": "dativecuicuicuiquibusquibusquibus",
+        "length": 33,
+        "frequency": 1
+      },
+      {
+        "word": "floccinaucinihilipilificastically",
+        "length": 33,
+        "frequency": 1
+      },
+      {
+        "word": "nnmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmn",
+        "length": 33,
+        "frequency": 1
+      },
+      {
+        "word": "californiaofframpwrongwaysignage",
+        "length": 32,
+        "frequency": 1
+      }
+    ]
+  }
+}

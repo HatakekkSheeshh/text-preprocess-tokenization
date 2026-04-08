@@ -5,6 +5,7 @@ from src.datasets.load_data import load
 
 # EDA task
 from src.eda.enwik8 import run_eda
+from src.eda.one_billion_word import run_one_billion_word_eda
 from src.eda.text8 import run_text8_eda
 from src.eda.wikitext_103 import run_wikitext_103_eda
 
@@ -12,7 +13,8 @@ EDA_RUNNERS = {
     "text8": run_text8_eda,
     "wikitext-103": run_wikitext_103_eda,
     "enwik8": run_eda,
-}
+    "one-billion-word": run_one_billion_word_eda,
+}   
 
 def parse_args():
     parser = argparse.ArgumentParser()

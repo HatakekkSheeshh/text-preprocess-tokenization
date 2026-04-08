@@ -1,0 +1,24 @@
+{
+  "vocabulary_distribution": {
+    "total_words": 14516489,
+    "total_vocab_size": 360005
+  },
+  "sentence_length": {
+    "average_length_in_words": 17.95,
+    "note": "This metric is heavily skewed on raw data. Periods are overloaded in image extensions/URLs, and sentence boundaries are severely disrupted by Wiki Markdown."
+  },
+  "punctuation_presence": {
+    "punctuation_ratio_percent": 12.55,
+    "punctuation_count": 10391529,
+    "note": "The punctuation count is heavily inflated by special characters used in MediaWiki syntax, specifically the abundant use of brackets [[ ]] for links and braces {{ }} for templates."
+  },
+  "naturalness_of_language": {
+    "total_xml_html_tags": 379090,
+    "tag_note": "This count encompasses both opening and closing tags.",
+    "total_url_links": 50604,
+    "url_note": "This count includes all URLs found in the text, regardless of their context or usage.",
+    "total_wiki_brackets": 940996,
+    "total_wiki_braces": 37004,
+    "rare_word_ratio_percent": 68.34
+  }
+}

@@ -1,0 +1,6 @@
+tokenization,avg_sequence_length
+word-level,25.145
+char-level(no-space),110.6452
+bpe-8k(hypothesis),
+bpe-16k(hypothesis),
+bpe-32k(hypothesis),

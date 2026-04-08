@@ -1,0 +1,264 @@
+{
+  "sample_rows": 1000000,
+  "non_empty_rows": 1000000,
+  "empty_rows": 0,
+  "total_tokens": 25370642,
+  "vocab_size_raw": 365580,
+  "char_vocab_size": 241,
+  "avg_sentence_len_tokens": 25.370642,
+  "median_sentence_len_tokens": 24.0,
+  "p95_sentence_len_tokens": 47.0,
+  "max_sentence_len_tokens": 2588,
+  "pct_rows_with_digits": 28.458699999999997,
+  "pct_rows_with_punctuation": 100.0,
+  "dataset": "one-billion-word",
+  "sample_size_requested": 1000000,
+  "sample_size_used": 1000000,
+  "train_rows_total": 2662800,
+  "validation_rows_total": 609157,
+  "test_rows_total": 609157,
+  "rare_token_stats": {
+    "rare_freq_eq_1": 199384,
+    "rare_freq_lt_5": 278320
+  },
+  "top_tokens": [
+    {
+      "token": "the",
+      "frequency": 1184525
+    },
+    {
+      "token": ",",
+      "frequency": 1156415
+    },
+    {
+      "token": ".",
+      "frequency": 988598
+    },
+    {
+      "token": "to",
+      "frequency": 599556
+    },
+    {
+      "token": "of",
+      "frequency": 571960
+    },
+    {
+      "token": "and",
+      "frequency": 518902
+    },
+    {
+      "token": "a",
+      "frequency": 512615
+    },
+    {
+      "token": "in",
+      "frequency": 458255
+    },
+    {
+      "token": "\"",
+      "frequency": 294465
+    },
+    {
+      "token": "'s",
+      "frequency": 227384
+    },
+    {
+      "token": "that",
+      "frequency": 220169
+    },
+    {
+      "token": "for",
+      "frequency": 215553
+    },
+    {
+      "token": "on",
+      "frequency": 188172
+    },
+    {
+      "token": "is",
+      "frequency": 185546
+    },
+    {
+      "token": "The",
+      "frequency": 173869
+    },
+    {
+      "token": "was",
+      "frequency": 154600
+    },
+    {
+      "token": "with",
+      "frequency": 148907
+    },
+    {
+      "token": "said",
+      "frequency": 141394
+    },
+    {
+      "token": "as",
+      "frequency": 123131
+    },
+    {
+      "token": "at",
+      "frequency": 119100
+    },
+    {
+      "token": "it",
+      "frequency": 114160
+    },
+    {
+      "token": "by",
+      "frequency": 111939
+    },
+    {
+      "token": "from",
+      "frequency": 106401
+    },
+    {
+      "token": "be",
+      "frequency": 101133
+    },
+    {
+      "token": "he",
+      "frequency": 99226
+    },
+    {
+      "token": "have",
+      "frequency": 98717
+    },
+    {
+      "token": "has",
+      "frequency": 98655
+    },
+    {
+      "token": "his",
+      "frequency": 94648
+    },
+    {
+      "token": "are",
+      "frequency": 92705
+    },
+    {
+      "token": "an",
+      "frequency": 81009
+    },
+    {
+      "token": ")",
+      "frequency": 74356
+    },
+    {
+      "token": "(",
+      "frequency": 73859
+    },
+    {
+      "token": "not",
+      "frequency": 73859
+    },
+    {
+      "token": "will",
+      "frequency": 71214
+    },
+    {
+      "token": "who",
+      "frequency": 68239
+    },
+    {
+      "token": "I",
+      "frequency": 66707
+    },
+    {
+      "token": "had",
+      "frequency": 64785
+    },
+    {
+      "token": "their",
+      "frequency": 62570
+    },
+    {
+      "token": "--",
+      "frequency": 61477
+    },
+    {
+      "token": "were",
+      "frequency": 60946
+    },
+    {
+      "token": "they",
+      "frequency": 60678
+    },
+    {
+      "token": "but",
+      "frequency": 59601
+    },
+    {
+      "token": "been",
+      "frequency": 57275
+    },
+    {
+      "token": "this",
+      "frequency": 56800
+    },
+    {
+      "token": "more",
+      "frequency": 54294
+    },
+    {
+      "token": "which",
+      "frequency": 54293
+    },
+    {
+      "token": "or",
+      "frequency": 53747
+    },
+    {
+      "token": "its",
+      "frequency": 52327
+    },
+    {
+      "token": "would",
+      "frequency": 50092
+    },
+    {
+      "token": "about",
+      "frequency": 48479
+    }
+  ],
+  "char_type_distribution": {
+    "lower": 0.7509814972588795,
+    "space": 0.17937580175540618,
+    "upper": 0.03137462890262461,
+    "punct": 0.028523350099094607,
+    "digit": 0.009707949809278938,
+    "other": 3.677217471620195e-05
+  },
+  "oov_simulation_wordlevel": [
+    {
+      "vocab_cap": 5000,
+      "estimated_oov_rate": 0.15177712097313112
+    },
+    {
+      "vocab_cap": 10000,
+      "estimated_oov_rate": 0.09736407143343084
+    },
+    {
+      "vocab_cap": 20000,
+      "estimated_oov_rate": 0.05827917165044538
+    },
+    {
+      "vocab_cap": 30000,
+      "estimated_oov_rate": 0.04194647498474813
+    },
+    {
+      "vocab_cap": 50000,
+      "estimated_oov_rate": 0.02687393563000884
+    },
+    {
+      "vocab_cap": 100000,
+      "estimated_oov_rate": 0.013945370400954005
+    }
+  ],
+  "notes": {
+    "sampling": "EDA is computed on a shuffled sample from the training split to keep runtime manageable.",
+    "tokenization": "Whitespace tokenization is used to stay aligned with the benchmark's tokenized sentence files."
+  }
+}

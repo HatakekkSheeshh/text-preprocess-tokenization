@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from itertools import islice
 from pathlib import Path
 
 import torch
@@ -89,17 +90,26 @@ def iter_split_texts(dataset_name: str, split_name: str):
         yield str(text)
 
 
+def maybe_limit_texts(texts, max_texts: int | None):
+    if max_texts is None:
+        yield from texts
+        return
+
+    yield from islice(texts, max_texts)
+
+
 def build_prepared_corpus(
     dataset_name: str,
     tokenizer: BaseTokenizer,
     *,
+    max_fit_texts: int | None = None,
     max_train_tokens: int | None = None,
     max_validation_tokens: int | None = None,
     max_test_tokens: int | None = None,
     sequence_length: int,
     stride: int | None = None,
 ) -> PreparedCorpus:
-    tokenizer.fit_from_texts(iter_split_texts(dataset_name, "train"))
+    tokenizer.fit_from_texts(maybe_limit_texts(iter_split_texts(dataset_name, "train"), max_fit_texts))
 
     split_limits = {
         "train": max_train_tokens,

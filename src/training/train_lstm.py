@@ -41,6 +41,7 @@ class LSTMTrainingConfig:
     num_workers: int = 0
     min_freq: int = 1
     max_vocab_size: int | None = 50_000
+    max_fit_texts: int | None = None
     max_train_tokens: int | None = None
     max_validation_tokens: int | None = None
     max_test_tokens: int | None = None
@@ -191,6 +192,7 @@ def train_lstm_language_model(config: LSTMTrainingConfig) -> dict:
     prepared_corpus = build_prepared_corpus(
         config.dataset_name,
         tokenizer,
+        max_fit_texts=config.max_fit_texts,
         max_train_tokens=config.max_train_tokens,
         max_validation_tokens=config.max_validation_tokens,
         max_test_tokens=config.max_test_tokens,

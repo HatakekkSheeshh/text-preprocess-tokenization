@@ -38,6 +38,7 @@ def parse_args():
     parser.add_argument("--num-workers", type=int, default=0)
     parser.add_argument("--min-freq", type=int, default=1)
     parser.add_argument("--max-vocab-size", type=int, default=50_000)
+    parser.add_argument("--max-fit-texts", type=int, default=None)
     parser.add_argument("--max-train-tokens", type=int, default=None)
     parser.add_argument("--max-validation-tokens", type=int, default=None)
     parser.add_argument("--max-test-tokens", type=int, default=None)
@@ -84,6 +85,7 @@ def main():
             num_workers=args.num_workers,
             min_freq=args.min_freq,
             max_vocab_size=args.max_vocab_size,
+            max_fit_texts=args.max_fit_texts,
             max_train_tokens=args.max_train_tokens,
             max_validation_tokens=args.max_validation_tokens,
             max_test_tokens=args.max_test_tokens,

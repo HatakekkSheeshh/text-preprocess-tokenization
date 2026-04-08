@@ -10,3 +10,5 @@ Planned metrics:
 
 Evaluation outputs should be saved to `outputs/metrics/`.
 
+Currently implemented:
+- loss and perplexity evaluation for LSTM language modeling

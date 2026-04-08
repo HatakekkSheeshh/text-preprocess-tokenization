@@ -1,2 +1,4 @@
 datasets
 matplotlib
+tokenizers
+torch

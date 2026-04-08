@@ -48,6 +48,23 @@ python main.py --eda text8
 
 EDA outputs will be saved to `outputs/eda/<dataset_name>/` when the EDA flow is implemented.
 
+Train an LSTM language model:
+
+```bash
+python main.py --train-lstm text8 --tokenizer word --sequence-length 128 --epochs 5
+```
+
+Quick smoke test on a small subset:
+
+```bash
+python main.py --train-lstm text8 --tokenizer word --sequence-length 32 --batch-size 8 --epochs 1 --embedding-dim 32 --hidden-dim 64 --max-train-tokens 4096 --max-validation-tokens 1024 --max-test-tokens 1024
+```
+
+Training artifacts are saved to:
+
+- `outputs/checkpoints/lstm/`
+- `outputs/metrics/lstm/`
+
 Currently implemented:
 
 - `text8`
@@ -116,9 +133,9 @@ Planned evaluation metrics:
 
 ## Current Status
 
-- No data preprocessing/tokenization source code yet
-- No model training or evaluation scripts yet
-- No experimental results yet
+- Dataset loading and EDA pipelines are available for multiple datasets
+- Simple word/character tokenizers and an LSTM language-model baseline are implemented
+- Full tokenization comparison experiments and final benchmark tables are still in progress
 - Project requirement documents are stored in `docs/`
 
 ## Next Steps

@@ -1,0 +1,148 @@
+{
+  "run_name": "colab_compare_text8_char_medium",
+  "config": {
+    "dataset_name": "text8",
+    "tokenizer_name": "char",
+    "sequence_length": 128,
+    "stride": null,
+    "embedding_dim": 256,
+    "hidden_dim": 512,
+    "num_layers": 2,
+    "dropout": 0.2,
+    "batch_size": 64,
+    "epochs": 5,
+    "learning_rate": 0.001,
+    "weight_decay": 0.0,
+    "grad_clip": 1.0,
+    "seed": 42,
+    "num_workers": 0,
+    "min_freq": 1,
+    "max_vocab_size": null,
+    "max_fit_texts": null,
+    "max_train_tokens": 1530000,
+    "max_validation_tokens": 85000,
+    "max_test_tokens": 85000,
+    "device": "cuda",
+    "run_name": "colab_compare_text8_char_medium",
+    "log_interval": 200
+  },
+  "model": {
+    "type": "lstm-language-model",
+    "num_parameters": 3700509
+  },
+  "tokenizer": {
+    "type": "char",
+    "vocab_size": 29
+  },
+  "dataset": {
+    "train": {
+      "num_tokens": 1530000,
+      "num_sequences": 11953
+    },
+    "validation": {
+      "num_tokens": 85000,
+      "num_sequences": 664
+    },
+    "test": {
+      "num_tokens": 85000,
+      "num_sequences": 664
+    }
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "train": {
+        "loss": 1.998395918642917,
+        "perplexity": 7.377213001251221,
+        "num_sequences": 11953,
+        "num_target_tokens": 1529984,
+        "duration_seconds": 2.062623847999987,
+        "tokens_per_second": 741765.883044328
+      },
+      "validation": {
+        "loss": 1.6877063311726215,
+        "perplexity": 5.407064456002461,
+        "num_sequences": 664,
+        "num_target_tokens": 84992
+      }
+    },
+    {
+      "epoch": 2,
+      "train": {
+        "loss": 1.5340468240544196,
+        "perplexity": 4.636903285980225,
+        "num_sequences": 11953,
+        "num_target_tokens": 1529984,
+        "duration_seconds": 1.9452267489999997,
+        "tokens_per_second": 786532.470205097
+      },
+      "validation": {
+        "loss": 1.5329876506184956,
+        "perplexity": 4.631994952733766,
+        "num_sequences": 664,
+        "num_target_tokens": 84992
+      }
+    },
+    {
+      "epoch": 3,
+      "train": {
+        "loss": 1.4178998762320787,
+        "perplexity": 4.128440856933594,
+        "num_sequences": 11953,
+        "num_target_tokens": 1529984,
+        "duration_seconds": 1.949175299000018,
+        "tokens_per_second": 784939.1487697002
+      },
+      "validation": {
+        "loss": 1.4766489669501064,
+        "perplexity": 4.378249412349002,
+        "num_sequences": 664,
+        "num_target_tokens": 84992
+      }
+    },
+    {
+      "epoch": 4,
+      "train": {
+        "loss": 1.3576598262364004,
+        "perplexity": 3.8870861530303955,
+        "num_sequences": 11953,
+        "num_target_tokens": 1529984,
+        "duration_seconds": 1.9285947529999987,
+        "tokens_per_second": 793315.442562547
+      },
+      "validation": {
+        "loss": 1.4440698149692581,
+        "perplexity": 4.237908270004659,
+        "num_sequences": 664,
+        "num_target_tokens": 84992
+      }
+    },
+    {
+      "epoch": 5,
+      "train": {
+        "loss": 1.317256210519112,
+        "perplexity": 3.7331643104553223,
+        "num_sequences": 11953,
+        "num_target_tokens": 1529984,
+        "duration_seconds": 1.9384762949999867,
+        "tokens_per_second": 789271.4519885374
+      },
+      "validation": {
+        "loss": 1.4202059909521816,
+        "perplexity": 4.137972737409908,
+        "num_sequences": 664,
+        "num_target_tokens": 84992
+      }
+    }
+  ],
+  "best_validation_loss": 1.4202059909521816,
+  "test": {
+    "loss": 1.443854894982763,
+    "perplexity": 4.236997556685255,
+    "num_sequences": 664,
+    "num_target_tokens": 84992
+  },
+  "total_training_seconds": 10.516437619999977,
+  "checkpoint_dir": "/root/text-preprocess-tokenization/outputs/checkpoints/lstm/colab_compare_text8_char_medium",
+  "tokenizer_path": "/root/text-preprocess-tokenization/outputs/checkpoints/lstm/colab_compare_text8_char_medium/tokenizer.json"
+}

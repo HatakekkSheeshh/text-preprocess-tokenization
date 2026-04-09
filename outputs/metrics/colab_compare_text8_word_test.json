@@ -1,0 +1,148 @@
+{
+  "run_name": "colab_compare_text8_word_medium",
+  "config": {
+    "dataset_name": "text8",
+    "tokenizer_name": "word",
+    "sequence_length": 128,
+    "stride": null,
+    "embedding_dim": 256,
+    "hidden_dim": 512,
+    "num_layers": 2,
+    "dropout": 0.2,
+    "batch_size": 64,
+    "epochs": 5,
+    "learning_rate": 0.001,
+    "weight_decay": 0.0,
+    "grad_clip": 1.0,
+    "seed": 42,
+    "num_workers": 0,
+    "min_freq": 1,
+    "max_vocab_size": 20000,
+    "max_fit_texts": null,
+    "max_train_tokens": 1530000,
+    "max_validation_tokens": 85000,
+    "max_test_tokens": 85000,
+    "device": "cuda",
+    "run_name": "colab_compare_text8_word_medium",
+    "log_interval": 200
+  },
+  "model": {
+    "type": "lstm-language-model",
+    "num_parameters": 19058208
+  },
+  "tokenizer": {
+    "type": "word",
+    "vocab_size": 20000
+  },
+  "dataset": {
+    "train": {
+      "num_tokens": 1530000,
+      "num_sequences": 11953
+    },
+    "validation": {
+      "num_tokens": 85000,
+      "num_sequences": 664
+    },
+    "test": {
+      "num_tokens": 85000,
+      "num_sequences": 664
+    }
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "train": {
+        "loss": 7.008132818642196,
+        "perplexity": 1105.58837890625,
+        "num_sequences": 11953,
+        "num_target_tokens": 1529984,
+        "duration_seconds": 8.126487929000007,
+        "tokens_per_second": 188271.2450159598
+      },
+      "validation": {
+        "loss": 6.909529008061053,
+        "perplexity": 1001.7753030668106,
+        "num_sequences": 664,
+        "num_target_tokens": 84992
+      }
+    },
+    {
+      "epoch": 2,
+      "train": {
+        "loss": 6.661353458851977,
+        "perplexity": 781.6082153320312,
+        "num_sequences": 11953,
+        "num_target_tokens": 1529984,
+        "duration_seconds": 8.151497022000001,
+        "tokens_per_second": 187693.62190414107
+      },
+      "validation": {
+        "loss": 6.691318006400603,
+        "perplexity": 805.3830529380094,
+        "num_sequences": 664,
+        "num_target_tokens": 84992
+      }
+    },
+    {
+      "epoch": 3,
+      "train": {
+        "loss": 6.402123328004434,
+        "perplexity": 603.1243896484375,
+        "num_sequences": 11953,
+        "num_target_tokens": 1529984,
+        "duration_seconds": 8.162309834000013,
+        "tokens_per_second": 187444.97956042644
+      },
+      "validation": {
+        "loss": 6.4124021817402665,
+        "perplexity": 609.3557074856841,
+        "num_sequences": 664,
+        "num_target_tokens": 84992
+      }
+    },
+    {
+      "epoch": 4,
+      "train": {
+        "loss": 6.166714523343833,
+        "perplexity": 476.61767578125,
+        "num_sequences": 11953,
+        "num_target_tokens": 1529984,
+        "duration_seconds": 8.188246926999994,
+        "tokens_per_second": 186851.2287966082
+      },
+      "validation": {
+        "loss": 6.2636092369814955,
+        "perplexity": 525.1107732394302,
+        "num_sequences": 664,
+        "num_target_tokens": 84992
+      }
+    },
+    {
+      "epoch": 5,
+      "train": {
+        "loss": 6.008314456778531,
+        "perplexity": 406.797119140625,
+        "num_sequences": 11953,
+        "num_target_tokens": 1529984,
+        "duration_seconds": 8.210105282,
+        "tokens_per_second": 186353.7613036909
+      },
+      "validation": {
+        "loss": 6.150207341435444,
+        "perplexity": 468.81458139409693,
+        "num_sequences": 664,
+        "num_target_tokens": 84992
+      }
+    }
+  ],
+  "best_validation_loss": 6.150207341435444,
+  "test": {
+    "loss": 6.1692018681261915,
+    "perplexity": 477.80460278160547,
+    "num_sequences": 664,
+    "num_target_tokens": 84992
+  },
+  "total_training_seconds": 45.16839180900001,
+  "checkpoint_dir": "/root/text-preprocess-tokenization/outputs/checkpoints/lstm/colab_compare_text8_word_medium",
+  "tokenizer_path": "/root/text-preprocess-tokenization/outputs/checkpoints/lstm/colab_compare_text8_word_medium/tokenizer.json"
+}

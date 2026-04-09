@@ -1,0 +1,148 @@
+{
+  "run_name": "colab_text8_lstm_word_medium",
+  "config": {
+    "dataset_name": "text8",
+    "tokenizer_name": "word",
+    "sequence_length": 128,
+    "stride": null,
+    "embedding_dim": 256,
+    "hidden_dim": 512,
+    "num_layers": 2,
+    "dropout": 0.2,
+    "batch_size": 64,
+    "epochs": 5,
+    "learning_rate": 0.001,
+    "weight_decay": 0.0,
+    "grad_clip": 1.0,
+    "seed": 42,
+    "num_workers": 0,
+    "min_freq": 1,
+    "max_vocab_size": 50000,
+    "max_fit_texts": null,
+    "max_train_tokens": 1530000,
+    "max_validation_tokens": 85000,
+    "max_test_tokens": 85000,
+    "device": "cuda",
+    "run_name": "colab_text8_lstm_word_medium",
+    "log_interval": 200
+  },
+  "model": {
+    "type": "lstm-language-model",
+    "num_parameters": 42128208
+  },
+  "tokenizer": {
+    "type": "word",
+    "vocab_size": 50000
+  },
+  "dataset": {
+    "train": {
+      "num_tokens": 1530000,
+      "num_sequences": 11953
+    },
+    "validation": {
+      "num_tokens": 85000,
+      "num_sequences": 664
+    },
+    "test": {
+      "num_tokens": 85000,
+      "num_sequences": 664
+    }
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "train": {
+        "loss": 7.48181181501307,
+        "perplexity": 1775.4549560546875,
+        "num_sequences": 11953,
+        "num_target_tokens": 1529984,
+        "duration_seconds": 18.424208433999993,
+        "tokens_per_second": 83042.04793822083
+      },
+      "validation": {
+        "loss": 7.416472980775029,
+        "perplexity": 1663.1571635570199,
+        "num_sequences": 664,
+        "num_target_tokens": 84992
+      }
+    },
+    {
+      "epoch": 2,
+      "train": {
+        "loss": 7.166752438220899,
+        "perplexity": 1295.6300048828125,
+        "num_sequences": 11953,
+        "num_target_tokens": 1529984,
+        "duration_seconds": 17.618948777,
+        "tokens_per_second": 86837.41688364862
+      },
+      "validation": {
+        "loss": 7.239097985876612,
+        "perplexity": 1392.837045382896,
+        "num_sequences": 664,
+        "num_target_tokens": 84992
+      }
+    },
+    {
+      "epoch": 3,
+      "train": {
+        "loss": 6.928483998916104,
+        "perplexity": 1020.9450073242188,
+        "num_sequences": 11953,
+        "num_target_tokens": 1529984,
+        "duration_seconds": 17.802678849000003,
+        "tokens_per_second": 85941.22339548584
+      },
+      "validation": {
+        "loss": 6.98405071051724,
+        "perplexity": 1079.281380817337,
+        "num_sequences": 664,
+        "num_target_tokens": 84992
+      }
+    },
+    {
+      "epoch": 4,
+      "train": {
+        "loss": 6.6689180937270525,
+        "perplexity": 787.5431518554688,
+        "num_sequences": 11953,
+        "num_target_tokens": 1529984,
+        "duration_seconds": 17.772984426000008,
+        "tokens_per_second": 86084.81070639967
+      },
+      "validation": {
+        "loss": 6.784715606505612,
+        "perplexity": 884.2285823272906,
+        "num_sequences": 664,
+        "num_target_tokens": 84992
+      }
+    },
+    {
+      "epoch": 5,
+      "train": {
+        "loss": 6.469485138725817,
+        "perplexity": 645.1515502929688,
+        "num_sequences": 11953,
+        "num_target_tokens": 1529984,
+        "duration_seconds": 17.813309723999993,
+        "tokens_per_second": 85889.93419558872
+      },
+      "validation": {
+        "loss": 6.631425656468036,
+        "perplexity": 758.5628501536348,
+        "num_sequences": 664,
+        "num_target_tokens": 84992
+      }
+    }
+  ],
+  "best_validation_loss": 6.631425656468036,
+  "test": {
+    "loss": 6.74119655195489,
+    "perplexity": 846.5730987541165,
+    "num_sequences": 664,
+    "num_target_tokens": 84992
+  },
+  "total_training_seconds": 98.858427272,
+  "checkpoint_dir": "/root/text-preprocess-tokenization/outputs/checkpoints/lstm/colab_text8_lstm_word_medium",
+  "tokenizer_path": "/root/text-preprocess-tokenization/outputs/checkpoints/lstm/colab_text8_lstm_word_medium/tokenizer.json"
+}

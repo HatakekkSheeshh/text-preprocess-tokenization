@@ -30,9 +30,11 @@ class BPETokenizer(BaseTokenizer):
     def fit_from_texts(self, texts: Iterable[str]) -> None:
         Tokenizer, models, pre_tokenizers, trainers = self._require_tokenizers()
 
+        # init tokenizer
         self._tokenizer = Tokenizer(models.BPE(unk_token=self.unk_token))
         self._tokenizer.pre_tokenizer = pre_tokenizers.WhitespaceSplit()
 
+        # 
         trainer = trainers.BpeTrainer(
             vocab_size=self.max_vocab_size or 50_000,
             min_frequency=self.min_freq,

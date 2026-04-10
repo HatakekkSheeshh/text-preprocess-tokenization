@@ -65,6 +65,7 @@ class BaseTokenizer:
     def fit_from_texts(self, texts) -> None:
         counter = Counter(self.iter_tokens_from_texts(texts))
 
+        # Build the tokenizer vocabulary 
         kept_tokens = [
             token
             for token, frequency in counter.most_common()
@@ -80,6 +81,7 @@ class BaseTokenizer:
         self.is_fitted = True
 
     def refresh_vocab_from_mapping(self, token_to_id: dict[str, int]) -> None:
+        # token->id mapping.
         max_token_id = max(token_to_id.values(), default=-1)
         id_to_token = [""] * (max_token_id + 1)
         for token, token_id in token_to_id.items():
@@ -95,6 +97,9 @@ class BaseTokenizer:
         return [self.token_to_id.get(token, self.unk_token_id) for token in tokens]
 
     def encode_texts(self, texts, *, max_tokens: int | None = None) -> list[int]:
+        if not self.is_fitted:
+            raise RuntimeError("Tokenizer must be fitted before encoding.")
+
         encoded_tokens: list[int] = []
 
         for token in self.iter_tokens_from_texts(texts):

@@ -11,3 +11,9 @@ Current structure:
 - `__init__.py`: package exports
 
 All tokenizers expose a consistent interface through `BaseTokenizer`.
+
+Common methods:
+
+- `fit_from_texts(...)`: build the tokenizer vocabulary from texts
+- `encode_texts(...)`: return an ordered token-id sequence
+- `decode_ids(...)`: map token ids back to tokens

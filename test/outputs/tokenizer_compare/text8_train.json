@@ -1,0 +1,6 @@
+[
+  {
+    "tokenizer": "bpe",
+    "error": "BPE tokenizer requires the `tokenizers` package. Install dependencies with `pip install -r requirements.txt`."
+  }
+]

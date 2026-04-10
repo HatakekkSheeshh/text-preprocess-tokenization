@@ -89,10 +89,10 @@ def evaluate_tokenizer(tokenizer_name: str, texts: list[str], max_vocab_size: in
     }
 
 
-def compare_tokenizers(texts: list[str], max_vocab_size: int | None) -> list[dict]:
+def compare_tokenizers(texts: list[str], tokenizer_names: list[str], max_vocab_size: int | None) -> list[dict]:
     results: list[dict] = []
 
-    for tokenizer_name in TOKENIZER_NAMES:
+    for tokenizer_name in tokenizer_names:
         try:
             results.append(evaluate_tokenizer(tokenizer_name, texts, max_vocab_size))
         except ImportError as exc:
@@ -117,6 +117,14 @@ def parse_args() -> argparse.Namespace:
     source_group.add_argument("--dataset", type=str, default=None)
     source_group.add_argument("--text-file", type=Path, default=None)
     parser.add_argument("--split", type=str, default="train")
+    parser.add_argument(
+        "--tokenizers",
+        type=str,
+        nargs="+",
+        default=list(TOKENIZER_NAMES),
+        choices=TOKENIZER_NAMES,
+        help="Choose one or more tokenizers to compare.",
+    )
     parser.add_argument("--max-texts", type=int, default=10)
     parser.add_argument("--max-vocab-size", type=int, default=500)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
@@ -136,7 +144,7 @@ def main() -> None:
     if not texts:
         raise ValueError("No texts found for comparison.")
 
-    results = compare_tokenizers(texts, args.max_vocab_size)
+    results = compare_tokenizers(texts, args.tokenizers, args.max_vocab_size)
     output_path = args.output_dir / output_name
     save_results(results, output_path)
 

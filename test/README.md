@@ -83,6 +83,12 @@ for the three implemented tokenization strategies:
 python test\tokenizer_compare.py --dataset text8 --split train --max-texts 10
 ```
 
+Run only selected tokenizers:
+
+```bash
+python test\tokenizer_compare.py --dataset text8 --split train --tokenizers word bpe
+```
+
 ### Run with an external text file
 
 ```bash
@@ -94,6 +100,7 @@ python test\tokenizer_compare.py --text-file data\sample.txt --max-texts 20
 - `--dataset`: dataset name to inspect
 - `--text-file`: path to an external `.txt` file
 - `--split`: split name when using `--dataset`
+- `--tokenizers`: one or more tokenizer names from `char`, `word`, `bpe`
 - `--max-texts`: maximum number of texts to compare
 - `--max-vocab-size`: vocabulary cap passed into the tokenizer
 - `--output-dir`: directory where JSON results are written

@@ -1,0 +1,47 @@
+{
+  "dataset_name": "wikitext-103",
+  "tokenizer_name": "char",
+  "vocab_size": 1252,
+  "fit_seconds": 39.13661874500002,
+  "splits": {
+    "train": {
+      "num_texts": 1801350,
+      "num_characters": 537088084,
+      "num_tokens": 537088084,
+      "avg_tokens_per_text": 298.1586499014628,
+      "median_tokens_per_text": 33.0,
+      "p95_tokens_per_text": 1143.0,
+      "max_tokens_per_text": 7064,
+      "unk_count": 0,
+      "unk_ratio": 0.0,
+      "encode_seconds": 117.87427521500001,
+      "tokens_per_second": 4556448.665498587
+    },
+    "validation": {
+      "num_texts": 3760,
+      "num_characters": 1138080,
+      "num_tokens": 1138080,
+      "avg_tokens_per_text": 302.6808510638298,
+      "median_tokens_per_text": 36.0,
+      "p95_tokens_per_text": 1136.0499999999997,
+      "max_tokens_per_text": 2235,
+      "unk_count": 0,
+      "unk_ratio": 0.0,
+      "encode_seconds": 0.25224547100003747,
+      "tokens_per_second": 4511795.575508394
+    },
+    "test": {
+      "num_texts": 4358,
+      "num_characters": 1276399,
+      "num_tokens": 1276399,
+      "avg_tokens_per_text": 292.8864157870583,
+      "median_tokens_per_text": 34.0,
+      "p95_tokens_per_text": 1128.2999999999993,
+      "max_tokens_per_text": 2567,
+      "unk_count": 0,
+      "unk_ratio": 0.0,
+      "encode_seconds": 0.2814491450000105,
+      "tokens_per_second": 4535096.384819191
+    }
+  }
+}

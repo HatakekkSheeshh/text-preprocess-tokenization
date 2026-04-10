@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
+import json
 import math
+from pathlib import Path
 import time
 
 from src.datasets.load_data import load_text_dataset
@@ -9,6 +11,8 @@ from src.tokenizers import build_tokenizer
 
 
 REQUIRED_SPLITS = ("train", "validation", "test")
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+TOKENIZATION_METRICS_ROOT = PROJECT_ROOT / "outputs" / "metrics" / "tokenization"
 
 
 @dataclass
@@ -165,3 +169,56 @@ def evaluate_tokenizer_on_dataset(
         fit_seconds=fit_seconds,
         splits=split_metrics,
     )
+
+
+def build_tokenization_metrics_path(
+    dataset_name: str,
+    tokenizer_name: str,
+    *,
+    output_dir: Path | None = None,
+) -> Path:
+    metrics_root = output_dir or TOKENIZATION_METRICS_ROOT
+    return metrics_root / f"{dataset_name}_{tokenizer_name}.json"
+
+
+def save_tokenization_evaluation(
+    result: TokenizationEvaluationResult,
+    *,
+    output_path: Path | None = None,
+    output_dir: Path | None = None,
+) -> Path:
+    path = output_path or build_tokenization_metrics_path(
+        result.dataset_name,
+        result.tokenizer_name,
+        output_dir=output_dir,
+    )
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(result.to_dict(), indent=2), encoding="utf-8")
+    return path
+
+
+def evaluate_and_save_tokenizer_on_dataset(
+    dataset_name: str,
+    tokenizer_name: str,
+    *,
+    max_fit_texts: int | None = None,
+    max_eval_texts_per_split: int | None = None,
+    min_freq: int = 1,
+    max_vocab_size: int | None = 50_000,
+    output_path: Path | None = None,
+    output_dir: Path | None = None,
+) -> tuple[TokenizationEvaluationResult, Path]:
+    result = evaluate_tokenizer_on_dataset(
+        dataset_name=dataset_name,
+        tokenizer_name=tokenizer_name,
+        max_fit_texts=max_fit_texts,
+        max_eval_texts_per_split=max_eval_texts_per_split,
+        min_freq=min_freq,
+        max_vocab_size=max_vocab_size,
+    )
+    saved_path = save_tokenization_evaluation(
+        result,
+        output_path=output_path,
+        output_dir=output_dir,
+    )
+    return result, saved_path

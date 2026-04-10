@@ -54,6 +54,12 @@ Train an LSTM language model:
 python main.py --train-lstm text8 --tokenizer word --sequence-length 128 --epochs 5
 ```
 
+Evaluate tokenization on a dataset:
+
+```bash
+python main.py --eval --dataset text8 --tokenizer word
+```
+
 Quick smoke test on a small subset:
 
 ```bash

@@ -1,15 +1,13 @@
 # src/tokenizers/
 
-Code for tokenization methods.
+Tokenization code for language-model experiments.
 
-Planned tokenizers:
-- word-level tokenizer
-- character-level tokenizer
-- BPE tokenizer
+Current structure:
+- `base.py`: shared tokenizer state and `BaseTokenizer`
+- `word_tokenizer.py`: whitespace-based word tokenizer
+- `char_tokenizer.py`: character-level tokenizer
+- `bpe_tokenizer.py`: BPE tokenizer using the `tokenizers` library
+- `factory.py`: `build_tokenizer(...)`
+- `__init__.py`: package exports
 
-All tokenizers should ideally expose a consistent interface such as `fit()`, `encode()`, and `decode()`.
-
-Currently implemented for LSTM training:
-- whitespace-based word tokenizer
-- character-level tokenizer
-- BPE tokenizer using the `tokenizers` library
+All tokenizers expose a consistent interface through `BaseTokenizer`.

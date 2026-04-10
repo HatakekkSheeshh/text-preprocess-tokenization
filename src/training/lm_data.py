@@ -8,7 +8,7 @@ import torch
 from torch.utils.data import Dataset
 
 from src.datasets.load_data import load
-from src.tokenizers.simple_tokenizers import BaseTokenizer
+from src.tokenizers import BaseTokenizer
 
 
 TEXT_SPLITS = ("train", "validation", "test")

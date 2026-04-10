@@ -1,0 +1,33 @@
+ww.auburn.edu/academic/liberal_arts/foreign/russian/icons/ Russian Icons from 12th to 18th century]
+*[http://www.goarch.org/access/resources/clipart/ Greek Orthodox Archdiocese of America: Icons]
+*[http://www.icon-art.info/gallery.php?lng=en Gallery of icons, murals and mosaics (mostly Russian) from 11th to 20th century]
+*[http://www.instaplanet.com/icon.html Two 19th century Russian icons depicting Saint Nicholas]
+
+{{Eastern Christianity}}
+[[Category:Religious objects]]
+[[Category:Art genres]]
+[[Category:Eastern Orthodoxy]]
+
+[[de:Ikone]]
+[[es:Ãcono]]
+[[eo:Ikono (religio)]]
+[[fr:IcÃ´ne (religion)]]
+[[he:×××§×× ××]]
+[[mk:ÐÐºÐ¾Ð½Ð¸]]
+[[nl:Icoon (schilderkunst)]]
+[[ja:ã¤ã³ã³]]
+[[pl:Ikona]]
+[[ru:ÐÐºÐ¾Ð½Ð°]]
+[[sr:ÐÐºÐ¾Ð½Ð°]]
+[[fi:Ikoni]]
+[[sv:Ikon]]
+[[uk:ÐÐºÐ¾Ð½Ð°]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Icon programming language</title>
+    <id>14801</id>
+    <revision>
+      <id>40364422</id>
+      <timestamp>2006-02-20T01:58:33Z</timestamp>
+      <contributor>

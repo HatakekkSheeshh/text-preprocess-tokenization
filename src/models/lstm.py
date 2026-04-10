@@ -4,6 +4,8 @@ import torch
 from torch import nn
 
 
+# Here: re-implement LSTM from scratch
+""" 
 class LSTMLanguageModel(nn.Module):
     def __init__(
         self,
@@ -51,3 +53,4 @@ class LSTMLanguageModel(nn.Module):
     @property
     def num_parameters(self) -> int:
         return sum(parameter.numel() for parameter in self.parameters() if parameter.requires_grad)
+ """

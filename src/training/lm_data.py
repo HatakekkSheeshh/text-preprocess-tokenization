@@ -66,7 +66,7 @@ def validate_required_splits(dataset_name: str, available_splits: tuple[str, ...
         )
 
 
-def maybe_limit_texts(texts, max_texts: int | None):
+def limit_texts(texts, max_texts: int | None):
     if max_texts is None:
         yield from texts
         return
@@ -96,7 +96,7 @@ def build_prepared_corpus(
     target_splits = tuple(split_name for split_name in REQUIRED_TEXT_SPLITS if split_name in text_dataset.split_names)
     prepared_splits: dict[str, PreparedSplit] = {}
 
-    tokenizer.fit_from_texts(maybe_limit_texts(text_dataset.iter_texts("train"), max_fit_texts))
+    tokenizer.fit_from_texts(limit_texts(text_dataset.iter_texts("train"), max_fit_texts))
 
     for split_name in target_splits:
         token_ids = tokenizer.encode_texts(

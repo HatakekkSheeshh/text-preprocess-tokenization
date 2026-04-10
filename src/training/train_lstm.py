@@ -12,7 +12,7 @@ from torch import nn
 from torch.utils.data import DataLoader
 
 from src.evaluation.language_modeling import evaluate_language_model
-from src.models.lstm_language_model import LSTMLanguageModel
+from models.lstm import LSTMLanguageModel
 from src.tokenizers import build_tokenizer
 from src.training.lm_data import LanguageModelingDataset, build_prepared_corpus
 

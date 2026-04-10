@@ -67,12 +67,12 @@ def evaluate_tokenizer(tokenizer_name: str, texts: list[str], max_vocab_size: in
     tokenizer.fit_from_texts(texts)
 
     encoded_ids = tokenizer.encode_texts(texts)
-    decoded_tokens = tokenizer.decode_ids(encoded_ids[:20]) if encoded_ids else []
+    decoded_tokens = tokenizer.decode_ids(encoded_ids[:100]) if encoded_ids else []
 
     if tokenizer_name == "bpe":
         preview_tokens = decoded_tokens
     else:
-        preview_tokens = build_preview(list(tokenizer.iter_tokens_from_texts(texts)))
+        preview_tokens = build_preview(list(tokenizer.iter_tokens_from_texts(texts)), 100)
 
     text_lengths = [len(text) for text in texts]
     encoded_lengths = [len(tokenizer.encode_texts([text])) for text in texts if text]

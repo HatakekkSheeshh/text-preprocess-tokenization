@@ -2,13 +2,16 @@
 
 Evaluation scripts and metric computation.
 
-Planned metrics:
+Implemented metrics:
+- tokenization evaluation:
+  - vocabulary size
+  - average / median / p95 / max tokens per text
+  - unknown-token count and ratio
+  - fit time and encode throughput
+- loss and perplexity evaluation for LSTM language modeling
+
+Planned additions:
 - Perplexity (PP)
-- vocabulary size
-- average sequence length
 - training/inference efficiency
 
 Evaluation outputs should be saved to `outputs/metrics/`.
-
-Currently implemented:
-- loss and perplexity evaluation for LSTM language modeling

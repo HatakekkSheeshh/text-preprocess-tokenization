@@ -40,7 +40,9 @@ class BPETokenizer(BaseTokenizer):
             min_frequency=self.min_freq,
             special_tokens=self.special_tokens,
         )
-        self._tokenizer.train_from_iterator(texts, trainer=trainer)
+        
+        list_texts = list(texts)
+        self._tokenizer.train_from_iterator(list_texts, trainer=trainer)
 
         self.refresh_vocab_from_mapping(self._tokenizer.get_vocab(with_added_tokens=True))
 

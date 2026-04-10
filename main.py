@@ -1,7 +1,7 @@
 import argparse
 
 # Load data
-from src.datasets.load_data import load
+from src.datasets.load_data import load_data
 
 # EDA task
 from src.eda.enwik8 import run_eda
@@ -51,9 +51,7 @@ def main():
     args = parse_args()
 
     if args.load is not None:
-        from src.datasets.load_data import load
-
-        load(args.load)
+        load_data(args.load)
 
     if args.eda is not None:
         dataset_name = args.eda.lower()

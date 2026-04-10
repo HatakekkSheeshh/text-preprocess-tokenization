@@ -2,21 +2,14 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from itertools import islice
-from pathlib import Path
 
 import torch
 from torch.utils.data import Dataset
 
-from src.datasets.load_data import load
+from src.datasets.load_data import load_text_dataset
 from src.tokenizers import BaseTokenizer
 
-
-TEXT_SPLITS = ("train", "validation", "test")
-ENWIK8_SPLIT_RANGES = {
-    "train": (0, 90_000_000),
-    "validation": (90_000_000, 95_000_000),
-    "test": (95_000_000, 100_000_000),
-}
+REQUIRED_TEXT_SPLITS = ("train", "validation", "test")
 
 
 @dataclass
@@ -36,9 +29,11 @@ class LanguageModelingDataset(Dataset):
     def __init__(self, token_ids: list[int], sequence_length: int, stride: int | None = None) -> None:
         if sequence_length <= 0:
             raise ValueError("sequence_length must be positive.")
+        if stride is not None and stride <= 0:
+            raise ValueError("stride must be positive when provided.")
 
         self.sequence_length = sequence_length
-        self.stride = stride or sequence_length
+        self.stride = sequence_length if stride is None else stride
         self.token_ids = torch.tensor(token_ids, dtype=torch.long)
         self.max_start = len(token_ids) - sequence_length - 1
 
@@ -62,32 +57,13 @@ class LanguageModelingDataset(Dataset):
         return inputs, targets
 
 
-def read_enwik8_split(file_path: Path, split_name: str) -> str:
-    if split_name not in ENWIK8_SPLIT_RANGES:
-        raise ValueError(f"Unsupported enwik8 split: {split_name}")
-
-    start, end = ENWIK8_SPLIT_RANGES[split_name]
-    raw_bytes = file_path.read_bytes()[start:end]
-    return raw_bytes.decode("latin-1")
-
-
-def iter_split_texts(dataset_name: str, split_name: str):
-    dataset = load(dataset_name)
-
-    if dataset_name == "enwik8":
-        if split_name not in ENWIK8_SPLIT_RANGES:
-            raise ValueError(f"Unsupported split for enwik8: {split_name}")
-        yield read_enwik8_split(dataset, split_name)
-        return
-
-    if split_name not in dataset:
-        raise ValueError(f"Split '{split_name}' not found in dataset '{dataset_name}'.")
-
-    for row in dataset[split_name]:
-        text = row.get("text", "")
-        if text is None:
-            continue
-        yield str(text)
+def validate_required_splits(dataset_name: str, available_splits: tuple[str, ...]) -> None:
+    missing_splits = [split_name for split_name in REQUIRED_TEXT_SPLITS if split_name not in available_splits]
+    if missing_splits:
+        raise ValueError(
+            f"Dataset '{dataset_name}' is missing required splits: {', '.join(missing_splits)}. "
+            f"Available splits: {', '.join(available_splits)}"
+        )
 
 
 def maybe_limit_texts(texts, max_texts: int | None):
@@ -109,18 +85,22 @@ def build_prepared_corpus(
     sequence_length: int,
     stride: int | None = None,
 ) -> PreparedCorpus:
-    tokenizer.fit_from_texts(maybe_limit_texts(iter_split_texts(dataset_name, "train"), max_fit_texts))
+    text_dataset = load_text_dataset(dataset_name)
+    validate_required_splits(dataset_name, text_dataset.split_names)
 
     split_limits = {
         "train": max_train_tokens,
         "validation": max_validation_tokens,
         "test": max_test_tokens,
     }
+    target_splits = tuple(split_name for split_name in REQUIRED_TEXT_SPLITS if split_name in text_dataset.split_names)
     prepared_splits: dict[str, PreparedSplit] = {}
 
-    for split_name in TEXT_SPLITS:
+    tokenizer.fit_from_texts(maybe_limit_texts(text_dataset.iter_texts("train"), max_fit_texts))
+
+    for split_name in target_splits:
         token_ids = tokenizer.encode_texts(
-            iter_split_texts(dataset_name, split_name),
+            text_dataset.iter_texts(split_name),
             max_tokens=split_limits[split_name],
         )
         dataset = LanguageModelingDataset(token_ids, sequence_length=sequence_length, stride=stride)

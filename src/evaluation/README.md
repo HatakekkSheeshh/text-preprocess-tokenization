@@ -1,17 +1,7 @@
 # src/evaluation/
 
-Evaluation scripts and metric computation.
+Evaluation helpers for tokenization and language-model experiments.
 
-Implemented metrics:
-- tokenization evaluation:
-  - vocabulary size
-  - average / median / p95 / max tokens per text
-  - unknown-token count and ratio
-  - fit time and encode throughput
-- loss and perplexity evaluation for LSTM language modeling
+Currently implemented:
 
-Planned additions:
-- Perplexity (PP)
-- training/inference efficiency
-
-Evaluation outputs should be saved to `outputs/metrics/`.
+- `tokenization.py`: vocabulary, token-count, and encoding-speed evaluation for tokenizers

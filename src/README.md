@@ -3,10 +3,9 @@
 Main source code for the project.
 
 Recommended module layout:
-- `datasets/`: data loading and preprocessing
+- `datasets/`: data loading utilities
 - `tokenizers/`: word-level, character-level, and BPE tokenizers
 - `eda/`: dataset analysis and visualization
-- `models/`: N-gram, RNN, or LSTM models
-- `training/`: training loops and checkpoint saving
-- `evaluation/`: metric computation and model comparison
-
+- `models/`: from-scratch language-model implementations
+- `training/`: experiment runners for n-gram baselines
+- `evaluation/`: tokenization-level metrics and supporting analysis

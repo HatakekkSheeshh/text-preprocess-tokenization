@@ -222,3 +222,9 @@ outputs/checkpoints/*
 outputs/metrics/*
 !outputs/metrics/.gitkeep
 !outputs/metrics/README.md
+
+outputs/artifacts/*
+!outputs/artifacts/.gitkeep
+!outputs/artifacts/README.md
+
+outputs/manifest.json

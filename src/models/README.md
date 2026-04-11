@@ -1,10 +1,7 @@
 # src/models/
 
-Model implementations for language modeling.
-
-Planned models:
-- N-gram baseline (bigram, trigram)
-- simple RNN/LSTM model trained from scratch
+Model implementations for the current Task 2 prediction baseline.
 
 Currently implemented:
-- `LSTMLanguageModel` in `src/models/lstm_language_model.py`
+
+- `ngram.py`: from-scratch unigram, bigram, and trigram language modeling with Laplace smoothing

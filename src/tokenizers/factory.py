@@ -23,5 +23,5 @@ def build_tokenizer(
 
     raise ValueError(
         f"Unsupported tokenizer: {tokenizer_name}. "
-        "Currently implemented tokenizers for LSTM training are: word, char, bpe."
+        "Currently implemented tokenizers for language-model experiments are: word, char, bpe."
     )

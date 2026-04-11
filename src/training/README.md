@@ -1,14 +1,14 @@
 # src/training/
 
-Training scripts and training utilities.
+Experiment runners for the current Task 2 prediction baseline.
 
-Typical responsibilities:
-- build dataloaders
-- run the training loop
-- save checkpoints to `outputs/checkpoints/`
-- log training metrics
+Current responsibilities:
+
+- fit tokenizers on the training split
+- prepare tokenized train/validation/test streams
+- run from-scratch n-gram experiments
+- save tokenizer artifacts and experiment metrics
 
 Currently implemented:
-- a baseline next-token prediction training pipeline for `LSTMLanguageModel`
-- reusable LM dataset slicing for contiguous token streams
-- checkpoint and metric export for later report analysis
+
+- `train_ngram.py` for unigram, bigram, and trigram experiments with Laplace smoothing

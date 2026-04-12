@@ -1,47 +1,47 @@
 {
   "dataset_name": "one-billion-word",
   "tokenizer_name": "char",
-  "vocab_size": 946,
-  "fit_seconds": 397.098397063,
+  "vocab_size": 413,
+  "fit_seconds": 17.782954399997834,
   "splits": {
     "train": {
-      "num_texts": 30301028,
-      "num_characters": 4115930245,
-      "num_tokens": 4115930245,
-      "avg_tokens_per_text": 135.83467349688598,
+      "num_texts": 2662800,
+      "num_characters": 361776088,
+      "num_tokens": 361776088,
+      "avg_tokens_per_text": 135.86303439987984,
       "median_tokens_per_text": 126.0,
       "p95_tokens_per_text": 257.0,
       "max_tokens_per_text": 14167,
       "unk_count": 0,
       "unk_ratio": 0.0,
-      "encode_seconds": 962.130602208,
-      "tokens_per_second": 4277932.991170143
+      "encode_seconds": 56.444677699997555,
+      "tokens_per_second": 6409392.3952021375
     },
     "validation": {
-      "num_texts": 306688,
-      "num_characters": 41704221,
-      "num_tokens": 41704221,
-      "avg_tokens_per_text": 135.98256534328047,
+      "num_texts": 609157,
+      "num_characters": 82806781,
+      "num_tokens": 82806781,
+      "avg_tokens_per_text": 135.9366813481582,
       "median_tokens_per_text": 126.0,
       "p95_tokens_per_text": 257.0,
-      "max_tokens_per_text": 4497,
-      "unk_count": 0,
-      "unk_ratio": 0.0,
-      "encode_seconds": 9.703860004000035,
-      "tokens_per_second": 4297694.008653162
+      "max_tokens_per_text": 5173,
+      "unk_count": 21,
+      "unk_ratio": 2.5360241934775846e-07,
+      "encode_seconds": 12.828985799991642,
+      "tokens_per_second": 6454663.080229923
     },
     "test": {
-      "num_texts": 306688,
-      "num_characters": 41704221,
-      "num_tokens": 41704221,
-      "avg_tokens_per_text": 135.98256534328047,
+      "num_texts": 609157,
+      "num_characters": 82806781,
+      "num_tokens": 82806781,
+      "avg_tokens_per_text": 135.9366813481582,
       "median_tokens_per_text": 126.0,
       "p95_tokens_per_text": 257.0,
-      "max_tokens_per_text": 4497,
-      "unk_count": 0,
-      "unk_ratio": 0.0,
-      "encode_seconds": 9.730946114999824,
-      "tokens_per_second": 4285731.367447897
+      "max_tokens_per_text": 5173,
+      "unk_count": 21,
+      "unk_ratio": 2.5360241934775846e-07,
+      "encode_seconds": 12.961558400013018,
+      "tokens_per_second": 6388643.899480238
     }
   }
 }

@@ -2,7 +2,7 @@
   "dataset_name": "wikitext-103",
   "tokenizer_name": "char",
   "vocab_size": 1252,
-  "fit_seconds": 39.13661874500002,
+  "fit_seconds": 48.124448900009156,
   "splits": {
     "train": {
       "num_texts": 1801350,
@@ -14,8 +14,8 @@
       "max_tokens_per_text": 7064,
       "unk_count": 0,
       "unk_ratio": 0.0,
-      "encode_seconds": 117.87427521500001,
-      "tokens_per_second": 4556448.665498587
+      "encode_seconds": 117.21590890000516,
+      "tokens_per_second": 4582040.859813496
     },
     "validation": {
       "num_texts": 3760,
@@ -27,8 +27,8 @@
       "max_tokens_per_text": 2235,
       "unk_count": 0,
       "unk_ratio": 0.0,
-      "encode_seconds": 0.25224547100003747,
-      "tokens_per_second": 4511795.575508394
+      "encode_seconds": 0.3088028000056511,
+      "tokens_per_second": 3685458.810539196
     },
     "test": {
       "num_texts": 4358,
@@ -40,8 +40,8 @@
       "max_tokens_per_text": 2567,
       "unk_count": 0,
       "unk_ratio": 0.0,
-      "encode_seconds": 0.2814491450000105,
-      "tokens_per_second": 4535096.384819191
+      "encode_seconds": 0.3143341999966651,
+      "tokens_per_second": 4060643.099012267
     }
   }
 }

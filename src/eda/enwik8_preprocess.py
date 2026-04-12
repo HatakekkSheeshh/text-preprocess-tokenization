@@ -4,10 +4,10 @@ from pathlib import Path
 
 DATASET_NAME = "enwik8"
 
-PROJECT_ROOT = Path.cwd().parent
-RAW_DATA_PATH = PROJECT_ROOT / "data" / "raw" / DATASET_NAME / DATASET_NAME     # Sửa chỗ này nếu lỗi
-PROCESSED_DIR = PROJECT_ROOT / "data" / "processed" / DATASET_NAME              # Sửa chỗ này
-CLEAN_DATA_PATH = PROCESSED_DIR / f"{DATASET_NAME}.txt"                         # Rename chỗ này cho khớp với dataloader
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+RAW_DATA_PATH = PROJECT_ROOT / "data" / "raw" / DATASET_NAME / DATASET_NAME
+PROCESSED_DIR = PROJECT_ROOT / "data" / "processed" / DATASET_NAME             
+CLEAN_DATA_PATH = PROCESSED_DIR / f"{DATASET_NAME}.txt"                        
 
 TAG_PATTERN = re.compile(r"<[^>]+>")
 URL_PATTERN = re.compile(r"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+")
@@ -134,3 +134,9 @@ def extract_and_clean_enwik8():
                         f_out.write(c_line + "\n")                  # Ở đây thay bằng gì cx đc eos, \n, ...
                         
                 article_buffer = []
+                
+         
+def main():
+    extract_and_clean_enwik8()
+if __name__ == "__main__":
+    main()

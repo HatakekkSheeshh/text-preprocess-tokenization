@@ -11,7 +11,9 @@ from zipfile import ZipFile
 from datasets import DatasetDict, load_dataset, load_from_disk  # type: ignore
 
 
-BASE_DIR = Path(__file__).resolve().parents[2] / "data" / "raw"
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+RAW_DATA_DIR = PROJECT_ROOT / "data" / "raw"
+PROCESSED_DATA_DIR = PROJECT_ROOT / "data" / "processed"
 ENWIK8_URL = "http://mattmahoney.net/dc/enwik8.zip"
 ONE_BILLION_WORD_URL = "https://www.statmt.org/lm-benchmark/1-billion-word-language-modeling-benchmark-r13output.tar.gz"
 ONE_BILLION_WORD_ARCHIVE_NAME = "one-billion-word.tar.gz"
@@ -29,23 +31,25 @@ ENWIK8_SPLIT_RANGES = {
 }
 
 
-def get_dataset_path(dataset_name: str) -> Path:
-    return BASE_DIR / dataset_name
+def get_dataset_path(dataset_name: str, *, processed: bool = False) -> Path:
+    base_dir = PROCESSED_DATA_DIR if processed else RAW_DATA_DIR
+    return base_dir / dataset_name
 
 
-def save_dataset(dataset_name: str, dataset: DatasetDict) -> None:
-    path = get_dataset_path(dataset_name)
+def save_dataset(dataset_name: str, dataset: DatasetDict, *, processed: bool = False) -> None:
+    path = get_dataset_path(dataset_name, processed=processed)
     path.parent.mkdir(parents=True, exist_ok=True)
     dataset.save_to_disk(str(path))
 
 
 class DatasetLoader(ABC):
-    def __init__(self, dataset_name: str) -> None:
+    def __init__(self, dataset_name: str, *, processed: bool = False) -> None:
         self.dataset_name = dataset_name
+        self.processed = processed
 
     @property
     def dataset_path(self) -> Path:
-        return get_dataset_path(self.dataset_name)
+        return get_dataset_path(self.dataset_name, processed=self.processed)
 
     @abstractmethod
     def load(self) -> DatasetDict | Path:
@@ -111,8 +115,15 @@ class ByteSliceTextDataset(TextDataset):
 
 
 class HuggingFaceDatasetLoader(DatasetLoader):
-    def __init__(self, dataset_name: str, dataset_path: str, dataset_config: str | None = None) -> None:
-        super().__init__(dataset_name)
+    def __init__(
+        self,
+        dataset_name: str,
+        dataset_path: str,
+        dataset_config: str | None = None,
+        *,
+        processed: bool = False,
+    ) -> None:
+        super().__init__(dataset_name, processed=processed)
         self.source_path = dataset_path
         self.source_config = dataset_config
 
@@ -125,7 +136,7 @@ class HuggingFaceDatasetLoader(DatasetLoader):
         else:
             dataset = load_dataset(self.source_path, self.source_config)
 
-        save_dataset(self.dataset_name, dataset)
+        save_dataset(self.dataset_name, dataset, processed=self.processed)
         return dataset
 
     def load_text_dataset(self) -> TextDataset:
@@ -134,6 +145,15 @@ class HuggingFaceDatasetLoader(DatasetLoader):
 
 class Enwik8DatasetLoader(DatasetLoader):
     def load(self) -> Path:
+        if self.processed:
+            cleaned_file_path = self.dataset_path / "enwik8.txt"
+            if cleaned_file_path.exists():
+                return cleaned_file_path
+            raise FileNotFoundError(
+                f"Processed enwik8 file not found: {cleaned_file_path}. "
+                "Run `python src/eda/enwik8_preprocess.py` first."
+            )
+
         legacy_file_path = self.dataset_path
         dataset_dir = self.dataset_path.parent / "enwik8"
         file_path = dataset_dir / "enwik8"
@@ -156,6 +176,16 @@ class Enwik8DatasetLoader(DatasetLoader):
         return file_path
 
     def load_text_dataset(self) -> TextDataset:
+        if self.processed:
+            file_path = self.load()
+            file_size = file_path.stat().st_size
+            split_ranges = {
+                "train": ByteRangeSplit(start=0, end=int(file_size * 0.90)),
+                "validation": ByteRangeSplit(start=int(file_size * 0.90), end=int(file_size * 0.95)),
+                "test": ByteRangeSplit(start=int(file_size * 0.95), end=file_size),
+            }
+            return ByteSliceTextDataset(file_path, split_ranges)
+
         split_ranges = {
             split_name: ByteRangeSplit(start=start, end=end)
             for split_name, (start, end) in ENWIK8_SPLIT_RANGES.items()
@@ -228,25 +258,30 @@ class OneBillionWordDatasetLoader(DatasetLoader):
                 "test": heldout_files,
             },
         )
-        save_dataset(self.dataset_name, dataset)
+        save_dataset(self.dataset_name, dataset, processed=self.processed)
         return dataset
 
     def load_text_dataset(self) -> TextDataset:
         return DatasetDictTextDataset(self.load())
 
 
-def build_dataset_loader(dataset_name: str) -> DatasetLoader:
+def build_dataset_loader(dataset_name: str, *, processed: bool = False) -> DatasetLoader:
     normalized_name = dataset_name.lower()
 
     if normalized_name == "enwik8":
-        return Enwik8DatasetLoader(normalized_name)
+        return Enwik8DatasetLoader(normalized_name, processed=processed)
 
     if normalized_name == "one-billion-word":
-        return OneBillionWordDatasetLoader(normalized_name)
+        return OneBillionWordDatasetLoader(normalized_name, processed=processed)
 
     if normalized_name in DATASET_SOURCES:
         dataset_path, dataset_config = DATASET_SOURCES[normalized_name]
-        return HuggingFaceDatasetLoader(normalized_name, dataset_path, dataset_config)
+        return HuggingFaceDatasetLoader(
+            normalized_name,
+            dataset_path,
+            dataset_config,
+            processed=processed,
+        )
 
     raise ValueError(f"Unsupported dataset: {dataset_name}")
 
@@ -257,7 +292,7 @@ def load_data(dataset_name: str) -> DatasetDict | Path:
 
 
 def load_text_dataset(dataset_name: str) -> TextDataset:
-    loader = build_dataset_loader(dataset_name)
+    loader = build_dataset_loader(dataset_name, processed=True)
     return loader.load_text_dataset()
 
 

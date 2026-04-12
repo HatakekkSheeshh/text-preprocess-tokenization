@@ -5,6 +5,7 @@ This project provides a simple pipeline for loading text datasets, running EDA, 
 ## What Is Included
 
 - Download and cache datasets under `data/raw/`
+- Read processed datasets from `data/processed/` for tokenizer evaluation and n-gram training
 - Run EDA for supported datasets and save results under `outputs/eda/`
 - Evaluate `word`, `char`, and `bpe` tokenizers
 - Train `unigram`, `bigram`, and `trigram` language models
@@ -112,7 +113,7 @@ outputs/eda/<dataset_name>/
 
 ### 3. Evaluate a Tokenizer
 
-Evaluate a tokenizer on a dataset:
+Evaluate a tokenizer on a dataset. Evaluation reads datasets from `data/processed/`:
 
 ```bash
 python main.py --eval --dataset text8 --tokenizer word
@@ -130,10 +131,17 @@ Example with the character tokenizer:
 python main.py --eval --dataset text8 --tokenizer char
 ```
 
-Example with the BPE tokenizer:
+Example:
 
 ```bash
-python main.py --eval --dataset text8 --tokenizer bpe --max-fit-texts 1000 --max-eval-texts-per-split 1000
+python main.py --eval --dataset text8 --tokenizer word --max-vocab-size 10000 --smoke
+python main.py --eval --dataset text8 --tokenizer word --max-vocab-size 30000 --smoke
+python main.py --eval --dataset text8 --tokenizer word --max-vocab-size 50000 --smoke
+
+python main.py --eval --dataset text8 --tokenizer bpe --max-vocab-size 4000 --smoke
+python main.py --eval --dataset text8 --tokenizer bpe --max-vocab-size 8000 --smoke
+python main.py --eval --dataset text8 --tokenizer bpe --max-vocab-size 16000 --smoke
+
 ```
 
 Evaluate one tokenizer on all datasets with smoke limits:
@@ -150,7 +158,7 @@ outputs/metrics/tokenization/
 
 ### 4. Train an N-Gram Language Model
 
-Train a trigram model with the word tokenizer:
+Train a trigram model with the word tokenizer. Training reads datasets from `data/processed/`:
 
 ```bash
 python main.py --train-ngram text8 --tokenizer word --ngram-order 3 --laplace-alpha 1.0

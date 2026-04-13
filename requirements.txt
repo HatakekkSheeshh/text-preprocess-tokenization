@@ -2,3 +2,4 @@ datasets
 matplotlib
 pandas
 tokenizers
+modal

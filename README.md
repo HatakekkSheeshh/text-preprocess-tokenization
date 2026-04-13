@@ -9,7 +9,7 @@ This project provides a simple pipeline for loading text datasets, running EDA, 
 - Run EDA for supported datasets and save results under `outputs/eda/`
 - Evaluate `word`, `char`, and `bpe` tokenizers
 - Train `unigram`, `bigram`, and `trigram` language models
-- Support Laplace smoothing, next-token prediction, sentence scoring, and perplexity computation
+- Support Laplace smoothing, next-token prediction, sentence scoring, Bits Per Character (BPC), and perplexity computation
 
 ## Setup
 
@@ -39,12 +39,12 @@ Use `--smoke` to apply small dataset-specific limits for a quick test run.
 
 Smoke mode only fills in limits that you did not set manually. For example, if you pass `--max-train-tokens 50000`, that value is kept.
 
-| Dataset | `--max-fit-texts` | `--max-eval-texts-per-split` | `--max-train-tokens` | `--max-validation-tokens` | `--max-test-tokens` |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| `text8` | `1000` | `1000` | `4096` | `1024` | `1024` |
-| `wikitext-103` | `1000` | `500` | `10000` | `2000` | `2000` |
-| `enwik8` | `1` | `1` | `20000` | `5000` | `5000` |
-| `one-billion-word` | `1000` | `500` | `20000` | `5000` | `5000` |
+| Dataset | `--max-fit-texts` | `--max-fit-characters` | `--max-eval-texts-per-split` | `--max-train-tokens` | `--max-validation-tokens` | `--max-test-tokens` |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| `text8` | `1000` | `200000` | `1000` | `4096` | `1024` | `1024` |
+| `wikitext-103` | `1000` | - | `500` | `10000` | `2000` | `2000` |
+| `enwik8` | `1` | `200000` | `1` | `20000` | `5000` | `5000` |
+| `one-billion-word` | `1000` | - | `500` | `20000` | `5000` | `5000` |
 
 Quick smoke test on one dataset:
 
@@ -170,6 +170,12 @@ Run a quick smoke test on a small subset:
 python main.py --train-ngram text8 --tokenizer word --ngram-order 3 --max-train-tokens 4096 --max-validation-tokens 1024 --max-test-tokens 1024
 ```
 
+For single-stream corpora such as `text8` and `enwik8`, limiting the number of fit texts may still leave you fitting on one very large text. In those cases, `--max-fit-characters` is the safer limit:
+
+```bash
+python main.py --train-ngram text8 --tokenizer word --ngram-order 3 --max-fit-characters 200000 --max-train-tokens 4096 --max-validation-tokens 1024 --max-test-tokens 1024
+```
+
 The same smoke test can now be written with:
 
 ```bash
@@ -222,7 +228,7 @@ python main.py --train-ngram text8 --tokenizer word --ngram-order 3 --predict-co
 
 ### 6. Score Text and Compute Perplexity
 
-Use `--score-text` to compute log probability and perplexity for a text string:
+Use `--score-text` to compute log probability, BPC, and perplexity for a text string:
 
 ```bash
 python main.py --train-ngram text8 --tokenizer word --ngram-order 3 --score-text "the history of science"
@@ -242,6 +248,12 @@ BPE can take longer to fit, so it is useful to limit the number of fit texts and
 python main.py --train-ngram text8 --tokenizer bpe --ngram-order 3 --max-fit-texts 1000 --max-train-tokens 4096 --max-validation-tokens 1024 --max-test-tokens 1024
 ```
 
+On `text8`, you can also cap the fitted corpus by characters:
+
+```bash
+python main.py --train-ngram text8 --tokenizer bpe --ngram-order 3 --max-fit-characters 200000 --max-train-tokens 4096 --max-validation-tokens 1024 --max-test-tokens 1024
+```
+
 ## All main.py Options
 
 | Option | Description | Default |
@@ -257,6 +269,7 @@ python main.py --train-ngram text8 --tokenizer bpe --ngram-order 3 --max-fit-tex
 | `--min-freq` | Minimum token frequency kept in the vocabulary | `1` |
 | `--max-vocab-size` | Maximum vocabulary size | `50000` |
 | `--max-fit-texts` | Maximum number of texts used to fit the tokenizer | `None` |
+| `--max-fit-characters` | Maximum number of raw characters used to fit the tokenizer | `None` |
 | `--max-eval-texts-per-split` | Maximum number of texts per split for tokenizer evaluation | `None` |
 | `--max-train-tokens` | Maximum number of training tokens for n-gram training | `None` |
 | `--max-validation-tokens` | Maximum number of validation tokens | `None` |

@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass
 from datetime import datetime
 import json
+import math
 from pathlib import Path
 import time
 
@@ -15,6 +16,13 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 ARTIFACT_ROOT = PROJECT_ROOT / "outputs" / "artifacts" / "ngram"
 METRICS_ROOT = PROJECT_ROOT / "outputs" / "metrics" / "ngram"
 REQUIRED_SPLITS = ("train", "validation", "test")
+LN_2 = math.log(2.0)
+
+
+@dataclass
+class EncodedSplit:
+    token_ids: list[int]
+    num_characters: int
 
 
 @dataclass
@@ -26,6 +34,7 @@ class NGramTrainingConfig:
     min_freq: int = 1
     max_vocab_size: int | None = 50_000
     max_fit_texts: int | None = None
+    max_fit_characters: int | None = None
     max_train_tokens: int | None = None
     max_validation_tokens: int | None = None
     max_test_tokens: int | None = None
@@ -50,6 +59,40 @@ def limit_texts(texts, max_texts: int | None):
         yield text
 
 
+def limit_texts_for_fit(
+    texts,
+    *,
+    max_texts: int | None = None,
+    max_characters: int | None = None,
+):
+    yielded_texts = 0
+    consumed_characters = 0
+
+    for text in texts:
+        if max_texts is not None and yielded_texts >= max_texts:
+            break
+
+        if max_characters is None:
+            yield text
+            yielded_texts += 1
+            continue
+
+        remaining_characters = max_characters - consumed_characters
+        if remaining_characters <= 0:
+            break
+
+        if len(text) <= remaining_characters:
+            yield text
+            yielded_texts += 1
+            consumed_characters += len(text)
+            continue
+
+        # For single-stream corpora such as text8/enwik8, slicing the first text
+        # still gives us a representative small-fit subset for smoke/Colab runs.
+        yield text[:remaining_characters]
+        break
+
+
 def validate_required_splits(dataset_name: str, split_names: tuple[str, ...]) -> None:
     missing_splits = [split_name for split_name in REQUIRED_SPLITS if split_name not in split_names]
     if missing_splits:
@@ -65,8 +108,52 @@ def encode_split(
     split_name: str,
     *,
     max_tokens: int | None = None,
-) -> list[int]:
-    return tokenizer.encode_texts(text_dataset.iter_texts(split_name), max_tokens=max_tokens)
+) -> EncodedSplit:
+    token_ids: list[int] = []
+    num_characters = 0
+    first_non_empty = True
+    boundary_token_ids = tokenizer.encode_tokens(tokenizer.boundary_tokens())
+
+    for text in text_dataset.iter_texts(split_name):
+        if not text:
+            continue
+
+        encoded_text = tokenizer.encode_text(text)
+        if not encoded_text:
+            continue
+
+        if not first_non_empty:
+            if max_tokens is not None:
+                remaining = max_tokens - len(token_ids)
+                if remaining <= 0:
+                    break
+                if remaining < len(boundary_token_ids):
+                    token_ids.extend(boundary_token_ids[:remaining])
+                    break
+
+            token_ids.extend(boundary_token_ids)
+
+        if max_tokens is None or len(token_ids) + len(encoded_text) <= max_tokens:
+            token_ids.extend(encoded_text)
+            num_characters += len(text)
+            first_non_empty = False
+            continue
+
+        remaining = max_tokens - len(token_ids)
+        if remaining <= 0:
+            break
+
+        token_ids.extend(encoded_text[:remaining])
+        num_characters += tokenizer.count_characters_for_token_prefix(text, remaining)
+        break
+
+    return EncodedSplit(token_ids=token_ids, num_characters=num_characters)
+
+
+def compute_bits_per_character(*, log_probability: float, num_characters: int) -> float:
+    if num_characters <= 0:
+        return 0.0
+    return -log_probability / (num_characters * LN_2)
 
 
 def build_prediction_payload(
@@ -104,9 +191,15 @@ def build_score_payload(
 ) -> dict:
     token_ids = tokenizer.encode_texts([text])
     score = model.score_sequence(token_ids)
+    num_characters = len(text)
     return {
         "text": text,
         "tokens": tokenizer.decode_ids(token_ids),
+        "num_characters": num_characters,
+        "bits_per_character": compute_bits_per_character(
+            log_probability=score.log_probability,
+            num_characters=num_characters,
+        ),
         **score.to_dict(),
     }
 
@@ -131,7 +224,13 @@ def train_ngram_language_model(
     )
 
     fit_start = time.perf_counter()
-    tokenizer.fit_from_texts(limit_texts(text_dataset.iter_texts("train"), config.max_fit_texts))
+    tokenizer.fit_from_texts(
+        limit_texts_for_fit(
+            text_dataset.iter_texts("train"),
+            max_texts=config.max_fit_texts,
+            max_characters=config.max_fit_characters,
+        )
+    )
     tokenizer_fit_seconds = time.perf_counter() - fit_start
 
     encoded_splits = {
@@ -147,7 +246,7 @@ def train_ngram_language_model(
     )
 
     model_fit_start = time.perf_counter()
-    model.fit(encoded_splits["train"])
+    model.fit(encoded_splits["train"].token_ids)
     model_fit_seconds = time.perf_counter() - model_fit_start
 
     run_name = build_run_name(config)
@@ -156,10 +255,17 @@ def train_ngram_language_model(
     tokenizer_path = artifact_dir / "tokenizer.json"
     tokenizer.save(tokenizer_path)
 
-    split_scores = {
-        split_name: model.score_sequence(token_ids).to_dict()
-        for split_name, token_ids in encoded_splits.items()
-    }
+    split_scores: dict[str, dict] = {}
+    for split_name, encoded_split in encoded_splits.items():
+        score = model.score_sequence(encoded_split.token_ids)
+        split_scores[split_name] = {
+            **score.to_dict(),
+            "num_characters": encoded_split.num_characters,
+            "bits_per_character": compute_bits_per_character(
+                log_probability=score.log_probability,
+                num_characters=encoded_split.num_characters,
+            ),
+        }
 
     predictions = [
         build_prediction_payload(model, tokenizer, context_text, top_k=top_k)
@@ -191,9 +297,10 @@ def train_ngram_language_model(
         },
         "dataset": {
             split_name: {
-                "num_tokens": len(token_ids),
+                "num_tokens": len(encoded_split.token_ids),
+                "num_characters": encoded_split.num_characters,
             }
-            for split_name, token_ids in encoded_splits.items()
+            for split_name, encoded_split in encoded_splits.items()
         },
         "splits": split_scores,
         "prediction_contexts": predictions,
@@ -212,8 +319,11 @@ def train_ngram_language_model(
     )
     print(
         f"  train ppl {split_scores['train']['perplexity']:.4f} | "
+        f"train bpc {split_scores['train']['bits_per_character']:.4f} | "
         f"val ppl {split_scores['validation']['perplexity']:.4f} | "
-        f"test ppl {split_scores['test']['perplexity']:.4f}"
+        f"val bpc {split_scores['validation']['bits_per_character']:.4f} | "
+        f"test ppl {split_scores['test']['perplexity']:.4f} | "
+        f"test bpc {split_scores['test']['bits_per_character']:.4f}"
     )
 
     for payload in predictions:
@@ -225,6 +335,7 @@ def train_ngram_language_model(
         print(
             f"Score for text {payload['text']!r}: "
             f"log_prob={payload['log_probability']:.4f}, "
+            f"bpc={payload['bits_per_character']:.4f}, "
             f"ppl={payload['perplexity']:.4f}"
         )
 

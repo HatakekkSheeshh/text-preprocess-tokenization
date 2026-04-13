@@ -19,6 +19,7 @@ SUPPORTED_DATASETS = tuple(EDA_RUNNERS.keys())
 SMOKE_LIMITS = {
     "text8": {
         "max_fit_texts": 1_000,
+        "max_fit_characters": 200_000,
         "max_eval_texts_per_split": 1_000,
         "max_train_tokens": 4_096,
         "max_validation_tokens": 1_024,
@@ -26,6 +27,7 @@ SMOKE_LIMITS = {
     },
     "wikitext-103": {
         "max_fit_texts": 1_000,
+        "max_fit_characters": None,
         "max_eval_texts_per_split": 500,
         "max_train_tokens": 10_000,
         "max_validation_tokens": 2_000,
@@ -33,6 +35,7 @@ SMOKE_LIMITS = {
     },
     "enwik8": {
         "max_fit_texts": 1,
+        "max_fit_characters": 200_000,
         "max_eval_texts_per_split": 1,
         "max_train_tokens": 20_000,
         "max_validation_tokens": 5_000,
@@ -40,6 +43,7 @@ SMOKE_LIMITS = {
     },
     "one-billion-word": {
         "max_fit_texts": 1_000,
+        "max_fit_characters": None,
         "max_eval_texts_per_split": 500,
         "max_train_tokens": 20_000,
         "max_validation_tokens": 5_000,
@@ -83,6 +87,7 @@ def parse_args():
     parser.add_argument("--min-freq", type=int, default=1)
     parser.add_argument("--max-vocab-size", type=int, default=50_000)
     parser.add_argument("--max-fit-texts", type=int, default=None)
+    parser.add_argument("--max-fit-characters", type=int, default=None)
     parser.add_argument("--max-eval-texts-per-split", type=int, default=None)
     parser.add_argument("--max-train-tokens", type=int, default=None)
     parser.add_argument("--max-validation-tokens", type=int, default=None)
@@ -158,6 +163,7 @@ def main():
                 min_freq=args.min_freq,
                 max_vocab_size=args.max_vocab_size,
                 max_fit_texts=get_limit_value(args, dataset_name, "max_fit_texts"),
+                max_fit_characters=get_limit_value(args, dataset_name, "max_fit_characters"),
                 max_train_tokens=get_limit_value(args, dataset_name, "max_train_tokens"),
                 max_validation_tokens=get_limit_value(args, dataset_name, "max_validation_tokens"),
                 max_test_tokens=get_limit_value(args, dataset_name, "max_test_tokens"),

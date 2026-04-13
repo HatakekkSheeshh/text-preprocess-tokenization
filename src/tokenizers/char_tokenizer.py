@@ -18,6 +18,11 @@ class CharTokenizer(BaseTokenizer):
     def boundary_tokens(self) -> list[str]:
         return ["\n"]
 
+    def count_characters_for_token_prefix(self, text: str, token_count: int) -> int:
+        if token_count <= 0:
+            return 0
+        return min(token_count, len(text))
+
     def iter_tokens_from_texts(self, texts):
         first_text = True
 

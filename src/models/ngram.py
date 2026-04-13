@@ -19,7 +19,7 @@ class NextTokenPrediction:
 class SequenceScore:
     num_tokens: int
     log_probability: float
-    probability: float
+    average_log_probability: float
     average_negative_log_likelihood: float
     perplexity: float
 
@@ -75,7 +75,7 @@ class NGramLanguageModel:
             return SequenceScore(
                 num_tokens=0,
                 log_probability=0.0,
-                probability=0.0,
+                average_log_probability=0.0,
                 average_negative_log_likelihood=0.0,
                 perplexity=1.0,
             )
@@ -86,14 +86,14 @@ class NGramLanguageModel:
             probability = self.score_next_token(context, token_id)
             log_probability += math.log(probability)
 
+        average_log_probability = log_probability / len(token_ids)
         average_negative_log_likelihood = -log_probability / len(token_ids)
-        probability = 0.0 if log_probability < -745 else math.exp(log_probability)
         perplexity = math.exp(average_negative_log_likelihood)
 
         return SequenceScore(
             num_tokens=len(token_ids),
             log_probability=log_probability,
-            probability=probability,
+            average_log_probability=average_log_probability,
             average_negative_log_likelihood=average_negative_log_likelihood,
             perplexity=perplexity,
         )

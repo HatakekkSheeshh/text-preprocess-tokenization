@@ -80,6 +80,14 @@ class BaseTokenizer:
         self.token_to_id = {token: index for index, token in enumerate(self.id_to_token)}
         self.is_fitted = True
 
+    def encode_text(self, text: str) -> list[int]:
+        return self.encode_tokens(self.tokenize(text))
+
+    def count_characters_for_token_prefix(self, text: str, token_count: int) -> int:
+        if token_count <= 0:
+            return 0
+        return len(text)
+
     def refresh_vocab_from_mapping(self, token_to_id: dict[str, int]) -> None:
         # token->id mapping.
         max_token_id = max(token_to_id.values(), default=-1)
@@ -101,11 +109,26 @@ class BaseTokenizer:
             raise RuntimeError("Tokenizer must be fitted before encoding.")
 
         encoded_tokens: list[int] = []
+        first_non_empty = True
+        encoded_boundary_tokens = self.encode_tokens(self.boundary_tokens())
 
-        for token in self.iter_tokens_from_texts(texts):
-            encoded_tokens.append(self.token_to_id.get(token, self.unk_token_id))
+        for text in texts:
+            if not text:
+                continue
+
+            token_ids = self.encode_text(text)
+            if not token_ids:
+                continue
+
+            if not first_non_empty:
+                encoded_tokens.extend(encoded_boundary_tokens)
+                if max_tokens is not None and len(encoded_tokens) >= max_tokens:
+                    return encoded_tokens[:max_tokens]
+
+            encoded_tokens.extend(token_ids)
+            first_non_empty = False
             if max_tokens is not None and len(encoded_tokens) >= max_tokens:
-                break
+                return encoded_tokens[:max_tokens]
 
         return encoded_tokens
 

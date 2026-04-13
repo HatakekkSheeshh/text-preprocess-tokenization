@@ -46,34 +46,24 @@ class BPETokenizer(BaseTokenizer):
 
         self.refresh_vocab_from_mapping(self._tokenizer.get_vocab(with_added_tokens=True))
 
-    def encode_texts(self, texts, *, max_tokens: int | None = None) -> list[int]:
+    def boundary_tokens(self) -> list[str]:
+        return ["<eos>"]
+
+    def encode_text(self, text: str) -> list[int]:
         if not self.is_fitted or self._tokenizer is None:
             raise RuntimeError("Tokenizer must be fitted before encoding.")
+        return self._tokenizer.encode(text).ids
 
-        encoded_tokens: list[int] = []
-        first_non_empty = True
-        eos_token_id = self.token_to_id["<eos>"]
+    def count_characters_for_token_prefix(self, text: str, token_count: int) -> int:
+        if token_count <= 0:
+            return 0
+        if not self.is_fitted or self._tokenizer is None:
+            raise RuntimeError("Tokenizer must be fitted before measuring character coverage.")
 
-        for text in texts:
-            if not text:
-                continue
-
-            token_ids = self._tokenizer.encode(text).ids
-            if not token_ids:
-                continue
-
-            if not first_non_empty:
-                encoded_tokens.append(eos_token_id)
-                if max_tokens is not None and len(encoded_tokens) >= max_tokens:
-                    return encoded_tokens[:max_tokens]
-
-            encoded_tokens.extend(token_ids)
-            first_non_empty = False
-
-            if max_tokens is not None and len(encoded_tokens) >= max_tokens:
-                return encoded_tokens[:max_tokens]
-
-        return encoded_tokens
+        encoding = self._tokenizer.encode(text)
+        if token_count >= len(encoding.ids):
+            return len(text)
+        return encoding.offsets[token_count - 1][1]
 
     def decode_ids(self, token_ids: list[int]) -> list[str]:
         if not self.is_fitted:

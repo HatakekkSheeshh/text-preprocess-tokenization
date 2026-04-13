@@ -7,6 +7,7 @@ Current responsibilities:
 - fit tokenizers on the training split
 - support fit limits by number of texts or raw characters
 - prepare tokenized train/validation/test streams
+- support split limits by token count or raw character count
 - run from-scratch n-gram experiments
 - save tokenizer artifacts and experiment metrics, including BPC and perplexity
 

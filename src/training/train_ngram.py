@@ -36,8 +36,11 @@ class NGramTrainingConfig:
     max_fit_texts: int | None = None
     max_fit_characters: int | None = None
     max_train_tokens: int | None = None
+    max_train_characters: int | None = None
     max_validation_tokens: int | None = None
+    max_validation_characters: int | None = None
     max_test_tokens: int | None = None
+    max_test_characters: int | None = None
     run_name: str | None = None
 
 
@@ -108,6 +111,7 @@ def encode_split(
     split_name: str,
     *,
     max_tokens: int | None = None,
+    max_characters: int | None = None,
 ) -> EncodedSplit:
     token_ids: list[int] = []
     num_characters = 0
@@ -118,8 +122,20 @@ def encode_split(
         if not text:
             continue
 
-        encoded_text = tokenizer.encode_text(text)
+        truncated_text = text
+        reached_character_limit = False
+        if max_characters is not None:
+            remaining_characters = max_characters - num_characters
+            if remaining_characters <= 0:
+                break
+            if len(text) > remaining_characters:
+                truncated_text = text[:remaining_characters]
+                reached_character_limit = True
+
+        encoded_text = tokenizer.encode_text(truncated_text)
         if not encoded_text:
+            if reached_character_limit:
+                break
             continue
 
         if not first_non_empty:
@@ -135,8 +151,10 @@ def encode_split(
 
         if max_tokens is None or len(token_ids) + len(encoded_text) <= max_tokens:
             token_ids.extend(encoded_text)
-            num_characters += len(text)
+            num_characters += len(truncated_text)
             first_non_empty = False
+            if reached_character_limit:
+                break
             continue
 
         remaining = max_tokens - len(token_ids)
@@ -144,7 +162,7 @@ def encode_split(
             break
 
         token_ids.extend(encoded_text[:remaining])
-        num_characters += tokenizer.count_characters_for_token_prefix(text, remaining)
+        num_characters += tokenizer.count_characters_for_token_prefix(truncated_text, remaining)
         break
 
     return EncodedSplit(token_ids=token_ids, num_characters=num_characters)
@@ -167,7 +185,7 @@ def build_prediction_payload(
     predictions = model.predict_next(
         context_ids,
         top_k=top_k,
-        excluded_token_ids=[tokenizer.pad_token_id, tokenizer.unk_token_id],
+        excluded_token_ids=tokenizer.special_token_ids,
     )
 
     return {
@@ -234,9 +252,27 @@ def train_ngram_language_model(
     tokenizer_fit_seconds = time.perf_counter() - fit_start
 
     encoded_splits = {
-        "train": encode_split(text_dataset, tokenizer, "train", max_tokens=config.max_train_tokens),
-        "validation": encode_split(text_dataset, tokenizer, "validation", max_tokens=config.max_validation_tokens),
-        "test": encode_split(text_dataset, tokenizer, "test", max_tokens=config.max_test_tokens),
+        "train": encode_split(
+            text_dataset,
+            tokenizer,
+            "train",
+            max_tokens=config.max_train_tokens,
+            max_characters=config.max_train_characters,
+        ),
+        "validation": encode_split(
+            text_dataset,
+            tokenizer,
+            "validation",
+            max_tokens=config.max_validation_tokens,
+            max_characters=config.max_validation_characters,
+        ),
+        "test": encode_split(
+            text_dataset,
+            tokenizer,
+            "test",
+            max_tokens=config.max_test_tokens,
+            max_characters=config.max_test_characters,
+        ),
     }
 
     model = NGramLanguageModel(

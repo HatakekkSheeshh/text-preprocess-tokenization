@@ -59,6 +59,10 @@ class BaseTokenizer:
         return self.token_to_id[self.unk_token]
 
     @property
+    def special_token_ids(self) -> list[int]:
+        return [self.token_to_id[token] for token in self.special_tokens if token in self.token_to_id]
+
+    @property
     def vocab_size(self) -> int:
         return len(self.id_to_token)
 

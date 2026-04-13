@@ -176,6 +176,12 @@ For single-stream corpora such as `text8` and `enwik8`, limiting the number of f
 python main.py --train-ngram text8 --tokenizer word --ngram-order 3 --max-fit-characters 200000 --max-train-tokens 4096 --max-validation-tokens 1024 --max-test-tokens 1024
 ```
 
+For a fairer cross-tokenizer comparison, prefer character-based split limits so every tokenizer sees the same amount of raw text:
+
+```bash
+python main.py --train-ngram text8 --tokenizer word --ngram-order 3 --max-fit-characters 1000000 --max-train-characters 1000000 --max-validation-characters 250000 --max-test-characters 250000
+```
+
 The same smoke test can now be written with:
 
 ```bash
@@ -272,8 +278,11 @@ python main.py --train-ngram text8 --tokenizer bpe --ngram-order 3 --max-fit-cha
 | `--max-fit-characters` | Maximum number of raw characters used to fit the tokenizer | `None` |
 | `--max-eval-texts-per-split` | Maximum number of texts per split for tokenizer evaluation | `None` |
 | `--max-train-tokens` | Maximum number of training tokens for n-gram training | `None` |
+| `--max-train-characters` | Maximum number of raw training characters for n-gram training | `None` |
 | `--max-validation-tokens` | Maximum number of validation tokens | `None` |
+| `--max-validation-characters` | Maximum number of raw validation characters | `None` |
 | `--max-test-tokens` | Maximum number of test tokens | `None` |
+| `--max-test-characters` | Maximum number of raw test characters | `None` |
 | `--run-name` | Custom run name | `None` |
 | `--smoke` | Use small dataset-specific limits for a quick smoke test | `False` |
 | `--predict-context` | Context string for next-token prediction; can be used multiple times | `[]` |

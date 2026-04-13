@@ -22,32 +22,44 @@ SMOKE_LIMITS = {
         "max_fit_characters": 200_000,
         "max_eval_texts_per_split": 1_000,
         "max_train_tokens": 4_096,
+        "max_train_characters": None,
         "max_validation_tokens": 1_024,
+        "max_validation_characters": None,
         "max_test_tokens": 1_024,
+        "max_test_characters": None,
     },
     "wikitext-103": {
         "max_fit_texts": 1_000,
         "max_fit_characters": None,
         "max_eval_texts_per_split": 500,
         "max_train_tokens": 10_000,
+        "max_train_characters": None,
         "max_validation_tokens": 2_000,
+        "max_validation_characters": None,
         "max_test_tokens": 2_000,
+        "max_test_characters": None,
     },
     "enwik8": {
         "max_fit_texts": 1,
         "max_fit_characters": 200_000,
         "max_eval_texts_per_split": 1,
         "max_train_tokens": 20_000,
+        "max_train_characters": None,
         "max_validation_tokens": 5_000,
+        "max_validation_characters": None,
         "max_test_tokens": 5_000,
+        "max_test_characters": None,
     },
     "one-billion-word": {
         "max_fit_texts": 1_000,
         "max_fit_characters": None,
         "max_eval_texts_per_split": 500,
         "max_train_tokens": 20_000,
+        "max_train_characters": None,
         "max_validation_tokens": 5_000,
+        "max_validation_characters": None,
         "max_test_tokens": 5_000,
+        "max_test_characters": None,
     },
 }
 
@@ -90,8 +102,11 @@ def parse_args():
     parser.add_argument("--max-fit-characters", type=int, default=None)
     parser.add_argument("--max-eval-texts-per-split", type=int, default=None)
     parser.add_argument("--max-train-tokens", type=int, default=None)
+    parser.add_argument("--max-train-characters", type=int, default=None)
     parser.add_argument("--max-validation-tokens", type=int, default=None)
+    parser.add_argument("--max-validation-characters", type=int, default=None)
     parser.add_argument("--max-test-tokens", type=int, default=None)
+    parser.add_argument("--max-test-characters", type=int, default=None)
     parser.add_argument("--run-name", type=str, default=None)
     parser.add_argument(
         "--smoke",
@@ -165,8 +180,11 @@ def main():
                 max_fit_texts=get_limit_value(args, dataset_name, "max_fit_texts"),
                 max_fit_characters=get_limit_value(args, dataset_name, "max_fit_characters"),
                 max_train_tokens=get_limit_value(args, dataset_name, "max_train_tokens"),
+                max_train_characters=get_limit_value(args, dataset_name, "max_train_characters"),
                 max_validation_tokens=get_limit_value(args, dataset_name, "max_validation_tokens"),
+                max_validation_characters=get_limit_value(args, dataset_name, "max_validation_characters"),
                 max_test_tokens=get_limit_value(args, dataset_name, "max_test_tokens"),
+                max_test_characters=get_limit_value(args, dataset_name, "max_test_characters"),
                 run_name=run_name,
             )
             train_ngram_language_model(

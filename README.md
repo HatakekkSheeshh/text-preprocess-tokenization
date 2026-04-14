@@ -104,6 +104,54 @@ Full:
 python main.py --train-ngram text8 --tokenizer word --ngram-order 2 --predict-context "the history " --predict-context "united " --predict-context "world war "
 ```
 
+## Run on Modal
+
+Use Modal when you want to run the same pipeline remotely instead of using your local machine.
+
+First, authenticate Modal if you have not done it before:
+
+```bash
+modal setup
+```
+
+Load a dataset into the Modal data volume:
+
+```bash
+modal run modal_main.py -- --load text8
+```
+
+Run EDA remotely:
+
+```bash
+modal run modal_main.py -- --eda text8
+```
+
+Evaluate a tokenizer remotely:
+
+```bash
+modal run modal_main.py -- --eval --dataset text8 --tokenizer word --smoke
+```
+
+Train an n-gram model remotely:
+
+```bash
+modal run modal_main.py -- --train-ngram text8 --tokenizer word --ngram-order 3 --smoke
+```
+
+Run a medium-style character-limited experiment:
+
+```bash
+modal run modal_main.py -- --train-ngram text8 --tokenizer word --ngram-order 3 --max-fit-characters 1000000 --max-train-characters 1000000 --max-validation-characters 250000 --max-test-characters 250000 --predict-context "the history " --predict-context "united " --predict-context "world war "
+```
+
+BPE example:
+
+```bash
+modal run modal_main.py -- --train-ngram text8 --tokenizer bpe --ngram-order 2 --max-vocab-size 16000 --max-fit-characters 1000000 --max-train-characters 1000000 --max-validation-characters 250000 --max-test-characters 250000
+```
+
+Modal stores datasets in the `text-preprocess-tokenization-data` volume and outputs in the `text-preprocess-tokenization-outputs` volume.
+
 ## Commands in main.py
 
 ### 1. Load a Dataset
@@ -210,37 +258,6 @@ Train a trigram model with the word tokenizer. Training reads datasets from `dat
 python main.py --train-ngram text8 --tokenizer word --ngram-order 3 --laplace-alpha 1.0
 ```
 
-Run a quick smoke test on a small subset:
-
-```bash
-python main.py --train-ngram text8 --tokenizer word --ngram-order 3 --max-train-tokens 4096 --max-validation-tokens 1024 --max-test-tokens 1024
-```
-
-For single-stream corpora such as `text8` and `enwik8`, limiting the number of fit texts may still leave you fitting on one very large text. In those cases, `--max-fit-characters` is the safer limit:
-
-```bash
-python main.py --train-ngram text8 --tokenizer word --ngram-order 3 --max-fit-characters 200000 --max-train-tokens 4096 --max-validation-tokens 1024 --max-test-tokens 1024
-```
-
-For a fairer cross-tokenizer comparison, prefer character-based split limits so every tokenizer sees the same amount of raw text:
-
-```bash
-python main.py --train-ngram text8 --tokenizer word --ngram-order 3 --max-fit-characters 1000000 --max-train-characters 1000000 --max-validation-characters 250000 --max-test-characters 250000
-```
-
-The same pattern also works for `char` and `bpe`:
-
-```bash
-python main.py --train-ngram text8 --tokenizer char --ngram-order 3 --max-fit-characters 1000000 --max-train-characters 1000000 --max-validation-characters 250000 --max-test-characters 250000
-python main.py --train-ngram text8 --tokenizer bpe --ngram-order 2 --max-fit-characters 1000000 --max-train-characters 1000000 --max-validation-characters 250000 --max-test-characters 250000
-```
-
-The same smoke test can now be written with:
-
-```bash
-python main.py --train-ngram text8 --tokenizer word --ngram-order 3 --smoke
-```
-
 Train a unigram model:
 
 ```bash
@@ -265,7 +282,54 @@ Train the same n-gram configuration on all supported datasets:
 python main.py --train-ngram all --tokenizer word --ngram-order 3 --smoke
 ```
 
-### 5. Predict the Next Token
+### 5. Train with Limits and Smoke Mode
+
+Run a quick smoke test on a small subset:
+
+```bash
+python main.py --train-ngram text8 --tokenizer word --ngram-order 3 --max-train-tokens 4096 --max-validation-tokens 1024 --max-test-tokens 1024
+```
+
+The same smoke test can also be written with:
+
+```bash
+python main.py --train-ngram text8 --tokenizer word --ngram-order 3 --smoke
+```
+
+For single-stream corpora such as `text8` and `enwik8`, limiting the number of fit texts may still leave you fitting on one very large text. In those cases, `--max-fit-characters` is the safer limit:
+
+```bash
+python main.py --train-ngram text8 --tokenizer word --ngram-order 3 --max-fit-characters 200000 --max-train-tokens 4096 --max-validation-tokens 1024 --max-test-tokens 1024
+```
+
+For a fairer cross-tokenizer comparison, prefer character-based split limits so every tokenizer sees the same amount of raw text:
+
+```bash
+python main.py --train-ngram text8 --tokenizer word --ngram-order 3 --max-fit-characters 1000000 --max-train-characters 1000000 --max-validation-characters 250000 --max-test-characters 250000
+```
+
+The same pattern also works for `char` and `bpe`:
+
+```bash
+python main.py --train-ngram text8 --tokenizer char --ngram-order 3 --max-fit-characters 1000000 --max-train-characters 1000000 --max-validation-characters 250000 --max-test-characters 250000
+python main.py --train-ngram text8 --tokenizer bpe --ngram-order 2 --max-fit-characters 1000000 --max-train-characters 1000000 --max-validation-characters 250000 --max-test-characters 250000
+```
+
+### 6. Train with BPE
+
+BPE can take longer to fit, so it is useful to limit the number of fit texts and training tokens during testing:
+
+```bash
+python main.py --train-ngram text8 --tokenizer bpe --ngram-order 3 --max-fit-texts 1000 --max-train-tokens 4096 --max-validation-tokens 1024 --max-test-tokens 1024
+```
+
+On `text8`, you can also cap the fitted corpus by characters:
+
+```bash
+python main.py --train-ngram text8 --tokenizer bpe --ngram-order 3 --max-fit-characters 200000 --max-train-tokens 4096 --max-validation-tokens 1024 --max-test-tokens 1024
+```
+
+### 7. Predict the Next Token and Score Text
 
 Use `--predict-context` to predict the next token from a context:
 
@@ -285,8 +349,6 @@ Change the number of returned predictions with `--top-k`:
 python main.py --train-ngram text8 --tokenizer word --ngram-order 3 --predict-context "the history of" --top-k 10
 ```
 
-### 6. Score Text and Compute Perplexity
-
 Use `--score-text` to compute log probability, BPC, and perplexity for a text string:
 
 ```bash
@@ -297,20 +359,6 @@ You can score multiple strings in one run:
 
 ```bash
 python main.py --train-ngram text8 --tokenizer word --ngram-order 3 --score-text "the history of science" --score-text "this is a test"
-```
-
-### 7. Train with BPE
-
-BPE can take longer to fit, so it is useful to limit the number of fit texts and training tokens during testing:
-
-```bash
-python main.py --train-ngram text8 --tokenizer bpe --ngram-order 3 --max-fit-texts 1000 --max-train-tokens 4096 --max-validation-tokens 1024 --max-test-tokens 1024
-```
-
-On `text8`, you can also cap the fitted corpus by characters:
-
-```bash
-python main.py --train-ngram text8 --tokenizer bpe --ngram-order 3 --max-fit-characters 200000 --max-train-tokens 4096 --max-validation-tokens 1024 --max-test-tokens 1024
 ```
 
 ## All main.py Options

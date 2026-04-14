@@ -1,220 +1,223 @@
-# Text8 Full N-Gram + BPC Results Analysis
+# Text8 Medium and Full N-Gram + BPC Results Analysis
 
 ## Scope
 
-This note analyzes the `full` export generated for the `text8` dataset using the count-based n-gram pipeline with Laplace smoothing. The goal of this document is twofold:
+This note summarizes and verifies the latest `text8` exports produced by the BPC-aware n-gram notebook. It is intended as a report-writing reference rather than as a raw experiment log.
 
-1. to verify that the exported results are internally consistent and suitable for reporting
-2. to provide a reusable interpretation of the results for the final report
+The analysis covers two exported result bundles:
 
-The analysis is based on the files exported under:
+- `report_export_text8_medium_ngram_bpc/`
+- `report_export_text8_full_ngram_bpc/`
 
-- `report_export_text8_full_ngram_bpc/quantitative_comparison.csv`
-- `report_export_text8_full_ngram_bpc/prediction_examples.csv`
-- `report_export_text8_full_ngram_bpc/sentence_scoring_examples.csv`
-- `report_export_text8_full_ngram_bpc/metrics/*.json`
+Both bundles contain:
 
-## Sanity Check
+- `quantitative_comparison.csv`
+- `prediction_examples.csv`
+- `sentence_scoring_examples.csv`
+- per-run metrics under `metrics/`
+- tokenizer/model artifacts under `artifacts/`
 
-The exported `full` results appear internally consistent and are suitable to use as a report reference.
+## Verification Verdict
 
-The main checks are as follows:
+The current `medium` and `full` exports look internally consistent and are suitable to use as report references.
 
-- All nine runs are present: `word`, `char`, and `BPE` tokenization combined with `1-gram`, `2-gram`, and `3-gram`.
-- The runs use the full `text8` splits rather than subset limits.
-- The raw character counts are aligned with the dataset definition:
+The main verification points are:
+
+- All nine runs are present in each bundle: `word`, `char`, and `bpe`, each combined with `1-gram`, `2-gram`, and `3-gram`.
+- The `medium` export now uses aligned raw-text budgets across tokenizers:
+  - training: `1,000,000` characters
+  - validation: `250,000` characters
+  - test: `250,000` characters
+- The `full` export uses the entire `text8` corpus:
   - training: `90,000,000` characters
   - validation: `5,000,000` characters
   - test: `5,000,000` characters
-- Special tokens such as `<eos>` no longer appear in the qualitative prediction output.
-- The CSV tables and per-run JSON metrics are mutually consistent.
+- Qualitative prediction outputs no longer contain special tokens such as `<eos>`.
+- The empty `sentence_scoring_examples.csv` files are expected in these exports, because the notebook currently sets `score_texts = []` and focuses on next-token prediction instead.
 
-In other words, there is no obvious evidence of an implementation bug in the final exported results.
+No obvious implementation bug is visible from the current exported results.
 
-## Experimental Context
+## Why These Results Matter
 
-The `text8` corpus is an aggressively normalized benchmark derived from Wikipedia. It contains only lowercase alphabetic text and spaces, with very limited surface variation. This property strongly influences the behavior of the tokenizers:
+`text8` is a special dataset for tokenizer comparison. It is already aggressively normalized: the text is lowercase, punctuation-free, and stored as a continuous stream of words separated by spaces. Because of this:
 
-- word-level tokenization suffers less from orthographic noise than on raw corpora
-- character-level tokenization becomes especially stable because the symbol inventory is extremely small
-- BPE still benefits from subword segmentation, but its usual advantage over word-level tokenization may be reduced because the corpus is already very clean
+- word-level tokenization is less harmed by orthographic variation than on raw corpora
+- character-level tokenization becomes extremely stable because the symbol inventory is tiny
+- BPE still helps reduce vocabulary sparsity, but its advantage over word-level tokenization is less automatic than on noisier datasets
 
-This background is important when interpreting the final numbers.
+This dataset property is important for interpreting both `BPC` and `PPL`.
 
-## Quantitative Summary
+## Medium-Scale Results
 
-The main report table can be summarized as follows.
+The `medium` export is best interpreted as a fair budgeted comparison. Every tokenizer sees the same amount of raw text, so the `BPC` values are much more meaningful than in earlier token-budgeted runs.
 
-| Tokenizer | N-gram | Train tokens | Tokenizer fit (s) | Model fit (s) | Val. BPC | Val. PPL | Test BPC | Test PPL |
+### Medium quantitative summary
+
+| Tokenizer | N-gram | Train chars | Tok. fit (s) | Model fit (s) | Val. BPC | Val. PPL | Test BPC | Test PPL |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Word | 1-gram | 15,301,749 | 3.63 | 8.56 | 1.7472 | 1260.03 | 1.7720 | 1313.83 |
-| Word | 2-gram | 15,301,749 | 3.59 | 25.20 | 1.7719 | 1393.74 | 1.8176 | 1580.96 |
-| Word | 3-gram | 15,301,749 | 3.78 | 63.48 | 2.2391 | 9402.46 | 2.2940 | 10894.51 |
-| Char | 1-gram | 90,000,000 | 5.14 | 45.16 | 4.1213 | 17.40 | 4.1248 | 17.45 |
-| Char | 2-gram | 90,000,000 | 5.21 | 92.47 | 3.4327 | 10.80 | 3.4373 | 10.83 |
-| Char | 3-gram | 90,000,000 | 5.44 | 140.02 | 2.8646 | 7.28 | 2.8845 | 7.38 |
-| BPE | 1-gram | 17,293,940 | 335.31 | 9.60 | 2.0256 | 1474.70 | 2.0706 | 1538.72 |
-| BPE | 2-gram | 17,293,940 | 316.20 | 25.59 | 1.8379 | 750.02 | 1.9002 | 840.95 |
-| BPE | 3-gram | 17,293,940 | 313.51 | 68.73 | 2.2747 | 3617.94 | 2.3510 | 4155.89 |
+| Word | 1-gram | 1,000,000 | 0.2546 | 0.1606 | 1.8182 | 1832.29 | 1.8492 | 1875.21 |
+| Word | 2-gram | 1,000,000 | 0.2441 | 0.4045 | 2.0834 | 5482.32 | 2.1166 | 5577.81 |
+| Word | 3-gram | 1,000,000 | 0.2338 | 1.1234 | 2.2889 | 12815.20 | 2.3244 | 13009.56 |
+| Char | 1-gram | 1,000,000 | 0.2521 | 0.9429 | 4.1280 | 17.48 | 4.1243 | 17.44 |
+| Char | 2-gram | 1,000,000 | 0.2567 | 1.7971 | 3.4432 | 10.88 | 3.4374 | 10.83 |
+| Char | 3-gram | 1,000,000 | 0.2651 | 2.7074 | 2.9397 | 7.67 | 2.9520 | 7.74 |
+| BPE | 1-gram | 1,000,000 | 30.1970 | 0.1697 | 2.1644 | 1902.58 | 2.2865 | 1966.03 |
+| BPE | 2-gram | 1,000,000 | 28.0132 | 0.3840 | 2.4879 | 5882.13 | 2.6300 | 6144.57 |
+| BPE | 3-gram | 1,000,000 | 27.2096 | 1.1598 | 2.7077 | 12662.70 | 2.8544 | 12932.04 |
 
-## Main Observations
+### Medium interpretation
 
-### 1. The full runs are much more stable than the earlier medium-scale experiments
+The medium run shows three useful patterns.
 
-Compared with smaller subset experiments, the full runs produce much more coherent behavior. The validation and test metrics are close to each other across all settings, which suggests that the evaluation is stable enough to support report-level discussion.
+First, `word 1-gram` already achieves the best `BPC` in this budgeted setting. This suggests that `text8` is indeed unusually friendly to word-level modeling.
 
-This matters because earlier quick or medium runs were primarily useful for debugging the pipeline and checking whether the metrics were meaningful. The full export is the first setting where the results become strong enough to support substantive conclusions.
+Second, `char 3-gram` achieves the lowest `PPL`, but not the best `BPC`. This confirms that perplexity alone is not a fair cross-tokenizer ranking metric.
 
-### 2. Word-level tokenization achieves the best BPC on Text8
+Third, BPE is still underwhelming at medium scale. In this export, even `bpe 1-gram` is better than `bpe 2-gram` and `bpe 3-gram`, which suggests that the BPE model needs more data before higher-order contexts become useful.
 
-The most important result is that the lowest validation and test BPC values are obtained by the word-level models:
+For the report, the medium results are best used as a controlled comparison that motivated the move to a full-scale run.
+
+## Full-Scale Results
+
+The `full` export is the stronger basis for the final report because it uses the entire `text8` corpus and produces more stable behavior.
+
+### Full quantitative summary
+
+| Tokenizer | N-gram | Train chars | Tok. fit (s) | Model fit (s) | Val. BPC | Val. PPL | Test BPC | Test PPL |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Word | 1-gram | 90,000,000 | 4.1726 | 12.8609 | 1.7472 | 1260.03 | 1.7720 | 1313.83 |
+| Word | 2-gram | 90,000,000 | 4.1765 | 31.1703 | 1.7719 | 1393.74 | 1.8176 | 1580.96 |
+| Word | 3-gram | 90,000,000 | 4.0902 | 71.3331 | 2.2391 | 9402.46 | 2.2940 | 10894.51 |
+| Char | 1-gram | 90,000,000 | 6.8667 | 69.5887 | 4.1213 | 17.40 | 4.1248 | 17.45 |
+| Char | 2-gram | 90,000,000 | 6.8687 | 134.6101 | 3.4327 | 10.80 | 3.4373 | 10.83 |
+| Char | 3-gram | 90,000,000 | 6.8882 | 205.0005 | 2.8646 | 7.28 | 2.8845 | 7.38 |
+| BPE | 1-gram | 90,000,000 | 190.7295 | 14.6333 | 2.0256 | 1474.70 | 2.0706 | 1538.72 |
+| BPE | 2-gram | 90,000,000 | 187.5740 | 32.5649 | 1.8379 | 750.02 | 1.9002 | 840.95 |
+| BPE | 3-gram | 90,000,000 | 108.1356 | 88.0856 | 2.2747 | 3617.94 | 2.3510 | 4155.89 |
+
+### Full interpretation
+
+The full run supports several stable conclusions.
+
+### 1. Word-level tokenization remains the strongest in BPC
+
+The best `BPC` values come from the word-level models:
 
 - best validation BPC: `1.7472` for `word 1-gram`
 - best test BPC: `1.7720` for `word 1-gram`
 
-Even `word 2-gram` remains close to this level, with only a small increase in BPC. This is a notable dataset-specific finding. On a heavily normalized corpus such as `text8`, word-level tokenization is much more competitive than one might expect from raw-text language modeling. Because the benchmark has already removed capitalization, punctuation, and most surface irregularities, the word vocabulary is cleaner and less fragmented than in noisier corpora.
+Even `word 2-gram` remains close. This is a strong dataset-specific result: on `text8`, once the benchmark has already normalized away most surface noise, a simple word-level model can be highly competitive.
 
-This result is consistent with the earlier EDA observations: `text8` is unusual in that it preserves lexical information while removing much of the orthographic variation that often hurts word-based models.
+### 2. Character-level tokenization still dominates perplexity
 
-### 3. Character-level tokenization gives the lowest perplexity, but not the best BPC
+Character-level models have the lowest `PPL` values by a large margin:
 
-Character-level models obtain by far the lowest perplexity values:
+- `char 1-gram` test PPL: `17.45`
+- `char 2-gram` test PPL: `10.83`
+- `char 3-gram` test PPL: `7.38`
 
-- `char 1-gram`: test PPL `17.45`
-- `char 2-gram`: test PPL `10.83`
-- `char 3-gram`: test PPL `7.38`
+However, their `BPC` values remain much worse than those of the strongest word-level and BPE models. This is the clearest evidence that `BPC` should be the primary metric in the final cross-tokenizer comparison.
 
-However, their BPC values are much higher than those of the word-level and BPE models:
+### 3. BPE improves substantially at full scale, especially for bigram
 
-- `char 3-gram` test BPC: `2.8845`
-- `word 1-gram` test BPC: `1.7720`
-- `bpe 2-gram` test BPC: `1.9002`
-
-This is exactly why BPC is necessary in this project. Perplexity is computed in the tokenizer’s own token space, so character-level perplexity benefits greatly from the extremely small character vocabulary. In contrast, BPC normalizes by the number of original characters and is therefore much more appropriate for comparing tokenization schemes at different granularities.
-
-For the final report, this leads to a clean interpretation:
-
-- character-level tokenization is numerically strong in its own token space
-- but BPC indicates that it is not the strongest option when the comparison is normalized by original text length
-
-### 4. BPE reaches its best result at the bigram level
-
-Among the BPE models, the 2-gram configuration is clearly the strongest:
+The most interesting change from `medium` to `full` is BPE behavior. At medium scale, `bpe 1-gram` was the best BPE setting. At full scale, `bpe 2-gram` clearly becomes the strongest BPE configuration:
 
 - validation BPC: `1.8379`
 - test BPC: `1.9002`
 - validation PPL: `750.02`
 - test PPL: `840.95`
 
-This is a much better outcome than the BPE 1-gram and 3-gram runs. It also shows that BPE can be competitive on `text8`, but its best behavior appears at a moderate context order rather than at trigram level.
+This suggests that BPE needs more data before its subword structure becomes useful in a count-based model.
 
-Interestingly, `bpe 2-gram` achieves lower perplexity than all word-level runs, yet its BPC is still worse than the best word-level result. Again, this difference reinforces the idea that BPC and PPL answer slightly different questions:
+### 4. Trigram remains too sparse for word and BPE under Laplace smoothing
 
-- PPL reflects uncertainty in the tokenizer’s own token space
-- BPC reflects compression or prediction efficiency relative to the original text stream
+Both `word 3-gram` and `bpe 3-gram` are much worse than their unigram or bigram counterparts. This is consistent with sparsity rather than with a coding bug. Under add-one smoothing, higher-order count-based models can spread probability mass too thinly over a large vocabulary. Character-level trigram still improves because the character vocabulary is tiny and local patterns repeat much more often.
 
-### 5. Trigram models are hurt by sparsity under Laplace smoothing
+## Medium-to-Full Consistency
 
-A consistent pattern across word-level and BPE tokenization is that the trigram models perform much worse than the corresponding unigram or bigram models:
+The most reassuring aspect of the new exports is that the broad qualitative story is stable across scales:
 
-- `word 3-gram` is substantially worse than `word 1-gram` and `word 2-gram`
-- `bpe 3-gram` is substantially worse than `bpe 2-gram`
+- `word` remains strongest by `BPC`
+- `char` remains strongest by `PPL`
+- `trigram` remains harmful for `word` and `bpe`
+- `BPC` and `PPL` clearly reward different aspects of the models
 
-This is not necessarily a bug. It is a known limitation of count-based n-gram models with add-one smoothing. As the context becomes more specific, sparsity increases sharply. Laplace smoothing then spreads probability mass too broadly across the large vocabulary, especially for word and subword tokenization.
+At the same time, the full run reveals a more mature BPE pattern than the medium run. This is exactly what we want from the full experiment: it keeps the high-level story, but removes some of the instability caused by small budgets.
 
-In contrast, character-level trigram still improves over character unigram and bigram because the character vocabulary is extremely small and short local patterns are highly repetitive.
+## Efficiency Discussion
 
-Therefore, the trigram results should be interpreted as evidence of smoothing limitations rather than evidence that longer local context is always harmful.
+The timing results show a clear trade-off.
 
-## Efficiency Analysis
+### Word
 
-The timing results reveal a strong efficiency contrast between tokenizer families.
+- tokenizer fitting is very cheap
+- model fitting is also relatively cheap
+- this makes word-level tokenization the simplest and most practical baseline on `text8`
 
-### Word-level
+### Character
 
-- tokenizer fit time is very small: around `3.6` to `3.8` seconds
-- model fit time increases with n-gram order, from `8.56` seconds to `63.48` seconds
-
-This makes word-level tokenization a very practical baseline on `text8`.
-
-### Character-level
-
-- tokenizer fit time is also small: around `5.1` to `5.4` seconds
-- model fit time is much larger because the token sequence is far longer
-  - `45.16` seconds for unigram
-  - `140.02` seconds for trigram
-
-So even though character-level tokenization is simple and robust, it pays a substantial computational cost because the sequence length is maximal.
+- tokenizer fitting is also cheap
+- model fitting is slower because the token sequence is much longer
+- the cost rises sharply from unigram to trigram
 
 ### BPE
 
-- tokenizer fit time is dramatically larger: roughly `313` to `335` seconds
-- model fit time is similar to word-level once tokenization is complete
+- tokenizer fitting is by far the most expensive step
+- model fitting itself is not dramatically worse than word-level fitting
+- the main overhead comes from learning the tokenizer, not from counting n-grams
 
-This means BPE’s main efficiency bottleneck in this setup is not n-gram fitting itself, but tokenizer training. For a report discussion, this is an important practical trade-off: BPE may offer better token-space modeling behavior than word-level in some cases, but it is much more expensive to prepare.
+This means BPE should be discussed not only in terms of quality, but also in terms of preprocessing cost.
 
 ## Qualitative Behavior
 
-### Next-token prediction
+The current notebook now uses raw-text next-token prediction as the qualitative example, which is a better fit for comparing different tokenization granularities than the earlier sentence-pair check.
 
-The prediction examples are broadly sensible.
+The full prediction examples are sensible for word-level and BPE models:
 
-For the context `the history`:
+- after `the history `, both `word` and `bpe` bigram/trigram predict `of`
+- after `united `, both predict `states`
+- after `world war `, both predict `ii`
 
-- word 2-gram predicts `of` most strongly
-- word 3-gram also predicts `of` most strongly
-- BPE 2-gram and 3-gram behave similarly
+These are strong qualitative examples because they reflect common encyclopedia-style continuations in `text8`.
 
-This is a reasonable outcome and matches natural English usage in the corpus.
+Character-level predictions are still reasonable, but they should be interpreted differently. Since the model predicts a single character rather than a word or subword unit, its top predictions are short local continuations such as a space or a frequent letter. This is expected and should not be treated as a failure of the character-level pipeline.
 
-For the context `in the`:
+In other words:
 
-- word and BPE models predict tokens such as `one`, `united`, `world`, and `first`
-- these candidates are plausible continuations in encyclopedia-style text
+- next-token prediction is a good qualitative illustration for all three tokenizers
+- but the semantic interpretability of the top prediction is naturally stronger for `word` and `bpe` than for `char`
 
-Character-level predictions are also locally plausible, but they are harder to interpret semantically because the model operates over individual characters rather than lexical units.
+## Report-Oriented Conclusions
 
-### Sentence scoring
+The current exports support the following report-ready conclusions.
 
-For word-level and BPE tokenization, the model assigns a much better score to the natural phrase `the history of science` than to the reversed sequence `science of history the`, especially for bigram and trigram:
+First, `text8` is a corpus on which word-level tokenization remains unusually competitive. Because the dataset is already normalized, the disadvantages of word-based modeling are reduced, and the best `BPC` results come from the simplest word-level configurations.
 
-- word 3-gram:
-  - natural phrase PPL: `143.65`
-  - reversed phrase PPL: `2908.95`
-- BPE 3-gram:
-  - natural phrase PPL: `87.59`
-  - reversed phrase PPL: `1332.81`
+Second, character-level tokenization achieves the lowest perplexity but not the best `BPC`. This shows why `PPL` should not be used as the only ranking criterion across tokenizers with different granularities.
 
-This is a good qualitative sign that the models capture meaningful local word order.
+Third, BPE becomes much more competitive when the full corpus is used. In particular, `bpe 2-gram` is clearly stronger than `bpe 1-gram` and `bpe 3-gram` at full scale, even though this pattern is not yet visible in the medium experiment.
 
-Character-level results are less aligned with this example. In fact, the reversed phrase is scored slightly better than the natural phrase for `char 2-gram` and `char 3-gram`. This should not be interpreted as a failure of the pipeline. Instead, it reflects the fact that character-level models evaluate short local character transitions rather than higher-level lexical or syntactic structure. For that reason, this sentence-pair example should be treated as a tokenizer-dependent illustration rather than a universal proof of model quality.
+Fourth, Laplace-smoothed trigram models are too sparse for `word` and `bpe` on this dataset. The strongest report candidates are therefore `word 1-gram`, `word 2-gram`, `bpe 2-gram`, and `char 3-gram`, rather than the trigram models across the board.
 
-## Report-Oriented Interpretation
+## Recommended Use in the Final Report
 
-The full `text8` results support the following conclusions.
+The safest way to use these exports in the report is:
 
-First, `text8` is a corpus where word-level tokenization remains surprisingly strong. Because the data is already heavily normalized, the main disadvantages of word-based modeling are reduced, and the simplest word-level models can achieve the best BPC.
+- use `BPC` as the main metric for cross-tokenizer comparison
+- use `PPL` as a complementary metric
+- use the `full` table as the main evidence
+- use the `medium` table as a smaller supporting experiment or sanity-check
+- use next-token prediction as the qualitative illustration
+- avoid over-claiming from character-level next-token predictions, since they operate in a different token space
 
-Second, character-level tokenization is extremely stable and achieves the lowest perplexity, but BPC shows that this does not translate into the best cross-tokenizer compression-style performance. This makes character-level modeling a useful baseline, but not necessarily the preferred tokenizer when fairness across token granularities matters.
+## Short Final Verdict
 
-Third, BPE becomes competitive at the bigram level and clearly outperforms its unigram and trigram variants. However, its tokenizer fitting cost is much higher than that of word-level or character-level tokenization, which is an important practical drawback.
+The current `medium` and `full` exports are in good shape and are suitable to support the `text8` analysis in the final report.
 
-Fourth, Laplace-smoothed trigram models are too sparse for word-level and BPE tokenization on this dataset. In this project, the strongest configurations on `text8` are therefore not the highest-order models, but rather the simpler unigram or bigram settings.
+If one concise summary is needed, the most defensible choices are:
 
-## Recommended Cautions for the Final Report
-
-- Use **BPC as the main metric** for cross-tokenizer comparison.
-- Report **PPL as a complementary metric**, not as the sole basis for ranking tokenizers.
-- Do not claim that character-level tokenization is the best tokenizer solely because it has the lowest perplexity.
-- Do not present the sentence pair `the history of science` vs. `science of history the` as a universal qualitative success case for every tokenizer; it is most meaningful for word-level and BPE models.
-- When discussing BPE, explicitly mention that its tokenizer fit time is much larger than the alternatives.
-
-## Practical Recommendation
-
-If only one tokenizer-model combination were to be highlighted for `text8` under the current count-based n-gram framework, the most defensible choices would be:
-
-- `word 1-gram` as the best BPC result
-- `bpe 2-gram` as the strongest BPE configuration
+- `word 1-gram` as the best overall `BPC` result on `text8`
+- `bpe 2-gram` as the strongest BPE configuration at full scale
 - `char 3-gram` as the strongest character-level configuration in terms of perplexity
 
-This three-way summary gives a balanced picture of the trade-offs and is likely more informative than naming a single universal winner.
+This three-part summary is more accurate than naming a single universal winner.

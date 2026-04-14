@@ -2,6 +2,13 @@
 
 This project provides a simple pipeline for loading text datasets, running EDA, evaluating tokenizers, and training a basic n-gram language model for language modeling experiments.
 
+You can run the project in two ways:
+
+- locally from the command line with `python main.py ...`
+- from the notebook in `notebooks/ngram_bpc_colab.ipynb`
+
+The notebook is mainly a convenience wrapper for batch experiments and export. The local CLI already supports the same core workflow: dataset loading, EDA, tokenizer evaluation, n-gram training, next-token prediction, BPC, and perplexity.
+
 ## What Is Included
 
 - Download and cache datasets under `data/raw/`
@@ -19,6 +26,12 @@ Create and activate a virtual environment, then install dependencies:
 python -m venv venv
 venv\Scripts\activate
 pip install -r requirements.txt
+```
+
+To confirm that the local CLI is available:
+
+```bash
+python main.py --help
 ```
 
 ## Supported Datasets
@@ -56,6 +69,39 @@ Quick smoke test on all datasets:
 
 ```bash
 python main.py --train-ngram all --tokenizer word --ngram-order 3 --smoke
+```
+
+## Local CLI vs Notebook
+
+If you prefer not to use the notebook, the local CLI is enough for everyday experimentation.
+
+- Use the notebook when you want one-click batch runs, CSV exports, and report-ready tables.
+- Use the local CLI when you want to test one configuration at a time, debug quickly, or run from your own shell/script.
+
+Typical mapping:
+
+- `quick` notebook profile: use `--smoke` or small manual limits
+- `medium` notebook profile: use character-based limits such as `--max-fit-characters 1000000 --max-train-characters 1000000 --max-validation-characters 250000 --max-test-characters 250000`
+- `full` notebook profile: omit the limits and run on the full dataset
+
+Example local commands that roughly match the notebook profiles on `text8`:
+
+Quick:
+
+```bash
+python main.py --train-ngram text8 --tokenizer word --ngram-order 2 --smoke --predict-context "the history "
+```
+
+Medium:
+
+```bash
+python main.py --train-ngram text8 --tokenizer word --ngram-order 2 --max-fit-characters 1000000 --max-train-characters 1000000 --max-validation-characters 250000 --max-test-characters 250000 --predict-context "the history " --predict-context "united " --predict-context "world war "
+```
+
+Full:
+
+```bash
+python main.py --train-ngram text8 --tokenizer word --ngram-order 2 --predict-context "the history " --predict-context "united " --predict-context "world war "
 ```
 
 ## Commands in main.py
@@ -180,6 +226,13 @@ For a fairer cross-tokenizer comparison, prefer character-based split limits so 
 
 ```bash
 python main.py --train-ngram text8 --tokenizer word --ngram-order 3 --max-fit-characters 1000000 --max-train-characters 1000000 --max-validation-characters 250000 --max-test-characters 250000
+```
+
+The same pattern also works for `char` and `bpe`:
+
+```bash
+python main.py --train-ngram text8 --tokenizer char --ngram-order 3 --max-fit-characters 1000000 --max-train-characters 1000000 --max-validation-characters 250000 --max-test-characters 250000
+python main.py --train-ngram text8 --tokenizer bpe --ngram-order 2 --max-fit-characters 1000000 --max-train-characters 1000000 --max-validation-characters 250000 --max-test-characters 250000
 ```
 
 The same smoke test can now be written with:

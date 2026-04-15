@@ -1,0 +1,185 @@
+{
+  "run_name": "report_text8_word_2gram_medium_bpc",
+  "config": {
+    "dataset_name": "text8",
+    "tokenizer_name": "word",
+    "order": 2,
+    "alpha": 1.0,
+    "min_freq": 1,
+    "max_vocab_size": 50000,
+    "max_fit_texts": null,
+    "max_fit_characters": 1000000,
+    "max_train_tokens": null,
+    "max_train_characters": 1000000,
+    "max_validation_tokens": null,
+    "max_validation_characters": 250000,
+    "max_test_tokens": null,
+    "max_test_characters": 250000,
+    "run_name": "report_text8_word_2gram_medium_bpc"
+  },
+  "tokenizer": {
+    "type": "word",
+    "vocab_size": 16777
+  },
+  "model": {
+    "type": "ngram-language-model",
+    "order": 2,
+    "alpha": 1.0,
+    "num_observed_contexts": 16775,
+    "num_observed_full_order_ngrams": 95006
+  },
+  "timing": {
+    "tokenizer_fit_seconds": 0.24410734200000306,
+    "model_fit_seconds": 0.4044914519999985,
+    "total_seconds": 0.6485987940000015
+  },
+  "dataset": {
+    "train": {
+      "num_tokens": 167285,
+      "num_characters": 1000000
+    },
+    "validation": {
+      "num_tokens": 41935,
+      "num_characters": 250000
+    },
+    "test": {
+      "num_tokens": 42518,
+      "num_characters": 250000
+    }
+  },
+  "splits": {
+    "train": {
+      "num_tokens": 167285,
+      "log_probability": -1343243.465469547,
+      "average_log_probability": -8.029670714466612,
+      "average_negative_log_likelihood": 8.029670714466612,
+      "perplexity": 3070.7303596913866,
+      "num_characters": 1000000,
+      "bits_per_character": 1.9378906863394212
+    },
+    "validation": {
+      "num_tokens": 41935,
+      "log_probability": -361030.3182467239,
+      "average_log_probability": -8.609283849927838,
+      "average_negative_log_likelihood": 8.609283849927838,
+      "perplexity": 5482.321106946933,
+      "num_characters": 250000,
+      "bits_per_character": 2.0834265989804512
+    },
+    "test": {
+      "num_tokens": 42518,
+      "log_probability": -366783.72885230486,
+      "average_log_probability": -8.626551786356481,
+      "average_negative_log_likelihood": 8.626551786356481,
+      "perplexity": 5577.8115681297495,
+      "num_characters": 250000,
+      "bits_per_character": 2.1166282667759297
+    }
+  },
+  "prediction_contexts": [
+    {
+      "context_text": "the history ",
+      "context_tokens": [
+        "the",
+        "history"
+      ],
+      "predictions": [
+        {
+          "token_id": 4,
+          "token": "of",
+          "probability": 0.003129243667709748
+        },
+        {
+          "token_id": 5,
+          "token": "and",
+          "probability": 0.0008265926669421976
+        },
+        {
+          "token_id": 3,
+          "token": "the",
+          "probability": 0.0004132963334710988
+        },
+        {
+          "token_id": 14,
+          "token": "as",
+          "probability": 0.00029521166676507054
+        },
+        {
+          "token_id": 6,
+          "token": "in",
+          "probability": 0.00023616933341205645
+        }
+      ]
+    },
+    {
+      "context_text": "united ",
+      "context_tokens": [
+        "united"
+      ],
+      "predictions": [
+        {
+          "token_id": 59,
+          "token": "states",
+          "probability": 0.009016973125884018
+        },
+        {
+          "token_id": 911,
+          "token": "kingdom",
+          "probability": 0.000942951438000943
+        },
+        {
+          "token_id": 501,
+          "token": "nations",
+          "probability": 0.0006482791136256483
+        },
+        {
+          "token_id": 802,
+          "token": "arab",
+          "probability": 0.0004714757190004715
+        },
+        {
+          "token_id": 7548,
+          "token": "locomotive",
+          "probability": 0.0001768033946251768
+        }
+      ]
+    },
+    {
+      "context_text": "world war ",
+      "context_tokens": [
+        "world",
+        "war"
+      ],
+      "predictions": [
+        {
+          "token_id": 835,
+          "token": "ii",
+          "probability": 0.0008245479710230285
+        },
+        {
+          "token_id": 5,
+          "token": "and",
+          "probability": 0.0005889628364450203
+        },
+        {
+          "token_id": 6,
+          "token": "in",
+          "probability": 0.0005300665528005183
+        },
+        {
+          "token_id": 104,
+          "token": "i",
+          "probability": 0.0005300665528005183
+        },
+        {
+          "token_id": 728,
+          "token": "effort",
+          "probability": 0.0005300665528005183
+        }
+      ]
+    }
+  ],
+  "scored_texts": [],
+  "artifact_dir": "/root/text-preprocess-tokenization/outputs/artifacts/ngram/report_text8_word_2gram_medium_bpc",
+  "tokenizer_path": "/root/text-preprocess-tokenization/outputs/artifacts/ngram/report_text8_word_2gram_medium_bpc/tokenizer.json"
+}

@@ -6,8 +6,8 @@ This note summarizes and verifies the latest `text8` exports produced by the BPC
 
 The analysis covers two exported result bundles:
 
-- `report_export_text8_medium_ngram_bpc/`
-- `report_export_text8_full_ngram_bpc/`
+- `report_exports/report_export_text8_medium_ngram_bpc/`
+- `report_exports/report_export_text8_full_ngram_bpc/`
 
 Both bundles contain:
 

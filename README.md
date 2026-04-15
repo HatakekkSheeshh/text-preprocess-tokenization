@@ -52,12 +52,31 @@ Use `--smoke` to apply small dataset-specific limits for a quick test run.
 
 Smoke mode only fills in limits that you did not set manually. For example, if you pass `--max-train-tokens 50000`, that value is kept.
 
-| Dataset | `--max-fit-texts` | `--max-fit-characters` | `--max-eval-texts-per-split` | `--max-train-tokens` | `--max-validation-tokens` | `--max-test-tokens` |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| `text8` | `1000` | `200000` | `1000` | `4096` | `1024` | `1024` |
-| `wikitext-103` | `1000` | - | `500` | `10000` | `2000` | `2000` |
-| `enwik8` | `1` | `200000` | `1` | `20000` | `5000` | `5000` |
-| `one-billion-word` | `1000` | - | `500` | `20000` | `5000` | `5000` |
+## Recommended Vocabulary Sizes
+
+Use these vocabulary sizes as the standard configuration when comparing tokenizers across datasets.
+
+| Dataset | Word `--max-vocab-size` | Char `--max-vocab-size` | BPE `--max-vocab-size` |
+| --- | ---: | ---: | ---: |
+| `text8` | `50000` | full char vocab | `8000` |
+| `wikitext-103` | `50000` | full char vocab | `32000` |
+| `enwik8` | `50000` | full char vocab | `16000` |
+| `one-billion-word` | `50000` | full char vocab | `50000` |
+
+For `char`, do not cap the vocabulary unless you are running a tiny smoke test; the character vocabulary is naturally small and should be fitted from the training split.
+
+## Train Split Statistics
+
+These statistics are computed on the local training splits with `python main.py --eval-train-word-counts all`.
+
+| Dataset | Characters | Words | Whitespace Tokens | Vocab Size | Lexical Diversity |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `text8` | `90,000,000` | `15,301,749` | `15,301,749` | `239,974` | `0.01568` |
+| `wikitext-103` | `537,088,084` | `86,537,234` | `101,425,671` | `226,125` | `0.00261` |
+| `enwik8` | `47,054,619` | `7,728,103` | `7,607,426` | `191,491` | `0.02478` |
+| `one-billion-word` | `361,776,088` | `60,927,800` | `67,554,859` | `348,020` | `0.00571` |
+
+The local `one-billion-word` numbers above come from the currently cached subset, not the full 100-shard benchmark.
 
 Quick smoke test on one dataset:
 
@@ -369,6 +388,7 @@ python main.py --train-ngram text8 --tokenizer word --ngram-order 3 --score-text
 | `--eda` | Run EDA for a dataset, or use `all` | `None` |
 | `--eval` | Enable tokenizer evaluation mode | `False` |
 | `--dataset` | Dataset name used with `--eval`, or `all` | `None` |
+| `--eval-train-word-counts` | Compare train split word counts for a dataset, or use `all` | `None` |
 | `--train-ngram` | Train an n-gram language model on a dataset, or use `all` | `None` |
 | `--tokenizer` | Tokenizer type: `word`, `char`, or `bpe` | `word` |
 | `--ngram-order` | N-gram order: `1`, `2`, or `3` | `3` |
@@ -384,6 +404,8 @@ python main.py --train-ngram text8 --tokenizer word --ngram-order 3 --score-text
 | `--max-validation-characters` | Maximum number of raw validation characters | `None` |
 | `--max-test-tokens` | Maximum number of test tokens | `None` |
 | `--max-test-characters` | Maximum number of raw test characters | `None` |
+| `--max-word-count-texts` | Maximum number of train texts for word-count evaluation | `None` |
+| `--max-word-count-characters` | Maximum number of train characters for word-count evaluation | `None` |
 | `--run-name` | Custom run name | `None` |
 | `--smoke` | Use small dataset-specific limits for a quick smoke test | `False` |
 | `--predict-context` | Context string for next-token prediction; can be used multiple times | `[]` |
@@ -405,6 +427,12 @@ Tokenizer evaluation outputs:
 outputs/metrics/tokenization/
 ```
 
+Train word-count comparison outputs:
+
+```text
+outputs/metrics/train_word_counts/
+```
+
 EDA outputs:
 
 ```text
@@ -418,6 +446,7 @@ outputs/eda/
 - `src/eda/`: EDA scripts for supported datasets
 - `src/tokenizers/`: word, character, and BPE tokenizers
 - `src/evaluation/tokenization.py`: tokenizer evaluation pipeline
+- `src/evaluation/train_word_counts.py`: train split word-count comparison pipeline
 - `src/models/ngram.py`: n-gram language model implementation
 - `src/training/train_ngram.py`: n-gram training pipeline
 

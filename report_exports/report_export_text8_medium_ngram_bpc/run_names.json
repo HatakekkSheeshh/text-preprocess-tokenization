@@ -1,0 +1,11 @@
+[
+  "report_text8_word_1gram_medium_bpc",
+  "report_text8_word_2gram_medium_bpc",
+  "report_text8_word_3gram_medium_bpc",
+  "report_text8_char_1gram_medium_bpc",
+  "report_text8_char_2gram_medium_bpc",
+  "report_text8_char_3gram_medium_bpc",
+  "report_text8_bpe_1gram_medium_bpc",
+  "report_text8_bpe_2gram_medium_bpc",
+  "report_text8_bpe_3gram_medium_bpc"
+]

@@ -1,0 +1,35 @@
+{
+  "dataset": "text8",
+  "profile": "medium",
+  "tokenizers": [
+    "word",
+    "char",
+    "bpe"
+  ],
+  "orders": [
+    1,
+    2,
+    3
+  ],
+  "limits": {
+    "max_fit_texts": null,
+    "max_fit_characters": 1000000,
+    "max_train_tokens": null,
+    "max_train_characters": 1000000,
+    "max_validation_tokens": null,
+    "max_validation_characters": 250000,
+    "max_test_tokens": null,
+    "max_test_characters": 250000
+  },
+  "max_vocab_size_by_tokenizer": {
+    "word": 50000,
+    "char": null,
+    "bpe": 16000
+  },
+  "prediction_contexts": [
+    "the history ",
+    "united ",
+    "world war "
+  ],
+  "score_texts": []
+}

@@ -5,6 +5,7 @@ from src.eda.enwik8 import run_eda
 from src.eda.one_billion_word import run_one_billion_word_eda
 from src.eda.text8 import run_text8_eda
 from src.eda.wikitext_103 import run_wikitext_103_eda
+from src.evaluation.train_word_counts import evaluate_train_word_counts
 from src.evaluation.tokenization import evaluate_and_save_tokenizer_on_dataset
 from src.training.train_ngram import NGramTrainingConfig, train_ngram_language_model
 
@@ -86,6 +87,12 @@ def parse_args():
     parser.add_argument("--eda", type=str, default=None, help="Run EDA for a dataset, or use 'all'.")
     parser.add_argument("--load", type=str, default=None, help="Load a dataset, or use 'all'.")
     parser.add_argument("--eval", action="store_true", help="Evaluate tokenization on a dataset.")
+    parser.add_argument(
+        "--eval-train-word-counts",
+        type=str,
+        default=None,
+        help="Compare train word counts for a dataset, or use 'all'.",
+    )
     parser.add_argument("--dataset", type=str, default=None, help="Dataset name for --eval, or use 'all'.")
     parser.add_argument(
         "--train-ngram",
@@ -107,6 +114,18 @@ def parse_args():
     parser.add_argument("--max-validation-characters", type=int, default=None)
     parser.add_argument("--max-test-tokens", type=int, default=None)
     parser.add_argument("--max-test-characters", type=int, default=None)
+    parser.add_argument(
+        "--max-word-count-texts",
+        type=int,
+        default=None,
+        help="Optional max train texts for --eval-train-word-counts.",
+    )
+    parser.add_argument(
+        "--max-word-count-characters",
+        type=int,
+        default=None,
+        help="Optional max train characters for --eval-train-word-counts.",
+    )
     parser.add_argument("--run-name", type=str, default=None)
     parser.add_argument(
         "--smoke",
@@ -163,6 +182,23 @@ def main():
                 f"{saved_path} for dataset={result.dataset_name}, tokenizer={result.tokenizer_name}"
             )
 
+    if args.eval_train_word_counts is not None:
+        dataset_names = expand_dataset_names(args.eval_train_word_counts)
+        results, saved_paths = evaluate_train_word_counts(
+            dataset_names=dataset_names,
+            max_texts=args.max_word_count_texts,
+            max_characters=args.max_word_count_characters,
+        )
+        print(f"Saved train word-count CSV to {saved_paths['csv']}")
+        print(f"Saved train word-count JSON to {saved_paths['json']}")
+        for plot_path in saved_paths["plots"]:
+            print(f"Saved plot to {plot_path}")
+        for result in results:
+            print(
+                f"{result.dataset_name}: words={result.num_words:,}, "
+                f"whitespace_tokens={result.whitespace_tokens:,}, vocab={result.vocab_size:,}"
+            )
+
     if args.train_ngram is not None:
         train_dataset_names = expand_dataset_names(args.train_ngram)
         for dataset_name in train_dataset_names:
@@ -194,10 +230,17 @@ def main():
                 top_k=args.top_k,
             )
 
-    if not args.load and not args.eda and not args.eval and not args.train_ngram:
+    if (
+        not args.load
+        and not args.eda
+        and not args.eval
+        and not args.eval_train_word_counts
+        and not args.train_ngram
+    ):
         raise ValueError(
             "No task selected. Use --load <dataset_name>, --eda <dataset_name>, "
-            "--eval --dataset <dataset_name>, or --train-ngram <dataset_name>."
+            "--eval --dataset <dataset_name>, --eval-train-word-counts <dataset_name>, "
+            "or --train-ngram <dataset_name>."
         )
 
 
